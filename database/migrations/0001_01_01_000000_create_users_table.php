@@ -57,7 +57,7 @@ return new class extends Migration
         Schema::create('inventory_transactions', function (Blueprint $table) {
             $table->id('transaction_id');
             $table->unsignedBigInteger('inventory_id')->nullable();
-            $table->enum('transaction_type', ['in', 'out']);
+            $table->enum('transaction_type', ['received', 'lost']);
             $table->integer('quantity');
             $table->unsignedBigInteger('approved_by')->nullable();
             $table->string('reference_number')->unique()->nullable();
@@ -69,6 +69,31 @@ return new class extends Migration
             $table->foreign('approved_by')->references('id')->on('users')->onDelete('set null');
         });
 
+        // Schema::create('division_inventory', function (Blueprint $table) {
+        //     $table->id('div_inventory_id');
+        //     $table->unsignedBigInteger('book_id')->nullable();
+        //     $table->integer('quantity');
+        //     $table->timestamps();
+
+        //     $table->foreign('book_id')->references('book_id')->on('books')->onDelete('set null');
+        // });
+
+        // Schema::create('division_transactions', function (Blueprint $table) {
+        //     $table->id('div_transaction_id');
+        //     $table->unsignedBigInteger('div_inventory_id')->nullable();
+        //     $table->enum('transaction_type', ['delivered', 'lost', 'sent']);
+        //     $table->unsignedBigInteger('sent_to')->nullable();
+        //     $table->integer('quantity');
+        //     $table->unsignedBigInteger('approved_by')->nullable();
+        //     $table->string('reference_number')->unique()->nullable();
+        //     $table->date('date')->nullable();
+        //     $table->time('time')->nullable();
+        //     $table->timestamps();
+
+        //     $table->foreign('div_inventory_id')->references('div_inventory_id')->on('division_inventory')->onDelete('set null');
+        //     $table->foreign('approved_by')->references('id')->on('users')->onDelete('set null');
+        //     $table->foreign('sent_to')->references('school_id')->on('schools')->onDelete('set null');
+        // });
 
         Schema::create('password_reset_tokens', function (Blueprint $table) {
             $table->string('email')->primary();

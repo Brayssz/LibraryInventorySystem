@@ -8,8 +8,8 @@
         <div class="page-header">
             <div class="add-item d-flex">
                 <div class="page-title">
-                    <h4>Books</h4>
-                    <h6>Manage your books</h6>
+                    <h4>Schools Inventory</h4>
+                    <h6>Manage Schools Inventory</h6>
                 </div>
             </div>
             <ul class="table-top-head">
@@ -22,10 +22,7 @@
                             data-feather="chevron-up" class="feather-chevron-up"></i></a>
                 </li>
             </ul>
-            <div class="page-btn">
-                <a class="btn btn-added add-book"><i data-feather="plus-circle" class="me-2"></i>Add New
-                    Book</a>
-            </div>
+            
         </div>
         <!-- /book list -->
         <div class="card table-list-card">
@@ -38,12 +35,24 @@
                         </div>
 
                         <div class="row mt-sm-3 mt-xs-3 mt-lg-0 w-sm-100 flex-grow-1">
+                            
+                            <div class="col-lg-4 col-sm-12">
+                                <div class="form-group">
+                                    <select class="select school_filter form-control">
+                                        <option value="">School</option>
+                                        @foreach($l_schools as $school)
+                                            <option value="{{ $school->school_id }}">{{ $school->name }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                            </div>
                             <div class="col-lg-2 col-sm-12">
-                                <div class="form-group ">
-                                    <select class="select status_filter form-control">
-                                        <option value="">Status</option>
-                                        <option value="available">Available</option>
-                                        <option value="unavailable">Unavailable</option>
+                                <div class="form-group">
+                                    <select class="select book_filter form-control">
+                                        <option value="">Book</option>
+                                        @foreach($l_books as $book)
+                                            <option value="{{ $book->book_id }}">{{ $book->title }}</option>
+                                        @endforeach
                                     </select>
                                 </div>
                             </div>
@@ -57,10 +66,11 @@
                     <table class="table book-table pb-3">
                         <thead>
                             <tr>
-                                <th>Title</th>
-                                <th>Author</th>
-                                <th>ISBN</th>
-                                <th>Status</th>
+                                <th>School</th>
+                                <th>Book</th>
+                                <th>Number of copies received</th>
+                                <th>Available</th>
+                                <th>Lost/Missing</th>
                                 <th class="no-sort">Action</th>
                             </tr>
                         </thead>
@@ -74,10 +84,73 @@
             </div>
         </div>
     </div>
-    @livewire('content.book-management')
+    @livewire('content.receive-copies')
+    @livewire('content.add-lost')      
+    
+    <div class="content">
+        <div class="page-header">
+            <div class="add-item d-flex">
+                <div class="page-title">
+                    <h4>DIVISION TOTAL</h4>
+                    <h6>Review Division total</h6>
+                </div>
+            </div>
+            <ul class="table-top-head">
+              
+            </ul>
+            
+        </div>
+        <!-- /book list -->
+        <div class="card table-list-card">
+            <div class="card-body pb-0">
+                <div class="table-top table-top-two table-top-new d-flex ">
+                    <div class="search-set mb-0 d-flex w-100 justify-content-start">
+                        
+                        <div class="search-input text-left">
+                            <a href="" class="btn btn-searchset"><i data-feather="search" class="feather-search"></i></a>
+                        </div>
+
+                        <div class="row mt-sm-3 mt-xs-3 mt-lg-0 w-sm-100 flex-grow-1">
+                            
+                            <div class="col-lg-2 col-sm-12">
+                                <div class="form-group">
+                                    <select class="select book_div_filter form-control">
+                                        <option value="">Book</option>
+                                        @foreach($l_books as $book)
+                                            <option value="{{ $book->book_id }}">{{ $book->title }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                            </div>
+                           
+                        </div>
+
+                    </div>
+                </div>
+
+                <div class="table-responsive">
+                    <table class="table division-table pb-3">
+                        <thead>
+                            <tr>
+                                <th>Book</th>
+                                <th>Number of Copies Delivered</th> 
+                                <th>Actual Number of SLR's</th>
+                                <th>Available</th>
+                                <th>Lost/Missing</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
 
 @endsection
-
 @push('scripts')
     <script>
         $(document).ready(function () {
@@ -90,7 +163,7 @@
             @endif
 
             if ($('.book-table').length > 0) {
-                var table = $('.book-table').DataTable({
+                var bookTable = $('.book-table').DataTable({
                     "processing": true,
                     "serverSide": true,
                     "bFilter": true,
@@ -107,54 +180,77 @@
                         info: "_START_ - _END_ of _TOTAL_ items",
                     },
                     "ajax": {
-                        "url": "/books",
+                        "url": "/inventory",
                         "type": "GET",
                         "headers": {
                             "Accept": "application/json"
                         },
                         "data": function (d) {
-                            d.status = $('.status_filter').val();
+                            d.school_id = $('.school_filter').val();
+                            d.book_id = $('.book_filter').val();
                         },
-                        "dataSrc": "data"
+                        "dataSrc": function (json) {
+                            var data = [];
+                            json.data.forEach(function (item) {
+                                item.books.forEach(function (book) {
+                                    data.push({
+                                        book_id: item.book_id,
+                                        school_id: item.school_id,
+                                        inventory_id: item.inventory_id,
+                                        school: item.school,
+                                        title: book.title,
+                                        received: book.received,
+                                        available: book.quantity,
+                                        lost: book.lost
+                                    });
+                                });
+                            });
+                            return data;
+                        }
                     },
                     "columns": [
-                    {
-                        "data": null,
-                        "render": function (data, type, row) {
+                        {
+                            "data": null,
+                            "render": function (data, type, row) {
+                                return row.school;
+                            }
+                        },
+                        {
+                            "data": null,
+                            "render": function (data, type, row) {
+                                const colors = {
+                                    A: 'bg-primary',
+                                    B: 'bg-success',
+                                    C: 'bg-info',
+                                    D: 'bg-warning',
+                                    E: 'bg-danger',
+                                    F: 'bg-secondary',
+                                    G: 'bg-dark',
+                                    H: 'bg-light',
+                                    I: 'bg-primary',
+                                    J: 'bg-success',
+                                    K: 'bg-info',
+                                    L: 'bg-warning',
+                                    M: 'bg-danger',
+                                    N: 'bg-secondary',
+                                    O: 'bg-dark',
+                                    P: 'bg-light',
+                                    Q: 'bg-primary',
+                                    R: 'bg-success',
+                                    S: 'bg-info',
+                                    T: 'bg-warning',
+                                    U: 'bg-danger',
+                                    V: 'bg-secondary',
+                                    W: 'bg-dark',
+                                    X: 'bg-light',
+                                    Y: 'bg-primary',
+                                    Z: 'bg-success'
+                                };
 
-                            const colors = {
-                                A: 'bg-primary',
-                                B: 'bg-success',
-                                C: 'bg-info',
-                                D: 'bg-warning',
-                                E: 'bg-danger',
-                                F: 'bg-secondary',
-                                G: 'bg-dark',
-                                H: 'bg-light',
-                                I: 'bg-primary',
-                                J: 'bg-success',
-                                K: 'bg-info',
-                                L: 'bg-warning',
-                                M: 'bg-danger',
-                                N: 'bg-secondary',
-                                O: 'bg-dark',
-                                P: 'bg-light',
-                                Q: 'bg-primary',
-                                R: 'bg-success',
-                                S: 'bg-info',
-                                T: 'bg-warning',
-                                U: 'bg-danger',
-                                V: 'bg-secondary',
-                                W: 'bg-dark',
-                                X: 'bg-light',
-                                Y: 'bg-primary',
-                                Z: 'bg-success'
-                            };
+                                const firstLetter = row.title ? row.title.charAt(0).toUpperCase() : 'A';
+                                const bgColor = colors[firstLetter] || 'bg-secondary';
 
-                            const firstLetter = row.title ? row.title.charAt(0).toUpperCase() : 'A';
-                            const bgColor = colors[firstLetter] || 'bg-secondary';
-
-                            return `
+                                return `
                                     <div class="userimgname">
                                         <a href="javascript:void(0);" class="product-img">
                                             <span class="avatar ${bgColor} avatar-rounded">
@@ -166,46 +262,154 @@
                                         </div>
                                     </div>
                                 `;
-
+                            }
+                        },
+                        {
+                            "data": "received"
+                        },
+                        {
+                            "data": "available"
+                        },
+                        {
+                            "data": "lost"
+                        },
+                        {
+                            "data": null,
+                            "render": function (data, type, row) {
+                                return `
+                                    <div class="edit-delete-action">
+                                        <a class="me-2 p-2 receive-copies" data-bookid="${row.book_id}" data-schoolid="${row.school_id}" data-inventoryid="${row.inventory_id}">
+                                            <i data-feather="download" class="feather-download"></i>
+                                        </a>
+                                        <a class="me-2 p-2 lost-copies" data-inventoryid="${row.inventory_id}">
+                                            <i data-feather="alert-circle" class="feather-alert-circle"></i>
+                                        </a>
+                                    </div>
+                                `;
+                            }
                         }
-                    },
-                    {
-                        "data": "author"
-                    },
-                    {
-                        "data": "isbn"
-                    },
-                    {
-                        "data": null,
-                        "render": function (data, type, row) {
-                            return row.status === "available" ?
-                                `<span class="badge badge-linesuccess">Available</span>` :
-                                `<span class="badge badge-linedanger">Unavailable</span>`;
-                        }
-                    },
-                    {
-                        "data": null,
-                        "render": function (data, type, row) {
-                            return `
-                                <div class="edit-delete-action">
-                                    <a class="me-2 p-2 edit-book" data-bookid="${row.book_id}">
-                                        <i data-feather="edit" class="feather-edit"></i>
-                                    </a>
-                                </div>
-                            `;
-                        }
-                    }
                     ],
                     "createdRow": function (row, data, dataIndex) {
-                        $(row).find('td').eq(4).addClass('action-table-data');
+                        $(row).find('td').eq(5).addClass('action-table-data');
                     },
                     "initComplete": function (settings, json) {
                         $('.dataTables_filter').appendTo('#tableSearch');
                         $('.dataTables_filter').appendTo('.search-input');
                         feather.replace();
 
-                        $('.status_filter').on('change', function () {
-                            table.draw();
+                        $('.book_filter, .school_filter').on('change', function () {
+                            bookTable.ajax.reload();
+                        });
+                    },
+                    "drawCallback": function (settings) {
+                        feather.replace();
+                    },
+                });
+            }
+
+            if ($('.division-table').length > 0) {
+                var divisionTable = $('.division-table').DataTable({
+                    "processing": true,
+                    "serverSide": true,
+                    "bFilter": true,
+                    "sDom": 'fBtlpi',
+                    'pagingType': 'numbers',
+                    "ordering": true,
+                    "order": [
+                        [0, 'desc']
+                    ],
+                    "language": {
+                        search: ' ',
+                        sLengthMenu: '_MENU_',
+                        searchPlaceholder: "Search...",
+                        info: "_START_ - _END_ of _TOTAL_ items",
+                    },
+                    "ajax": {
+                        "url": "/division-total",
+                        "type": "GET",
+                        "headers": {
+                            "Accept": "application/json"
+                        },
+                        "data": function (d) {
+                            d.book_id = $('.book_div_filter').val();
+                        },
+                        "dataSrc": function (json) {
+                            return json.data;
+                        }
+                    },
+                    "columns": [
+                        {
+                            "data": null,
+                            "render": function (data, type, row) {
+                                const colors = {
+                                    A: 'bg-primary',
+                                    B: 'bg-success',
+                                    C: 'bg-info',
+                                    D: 'bg-warning',
+                                    E: 'bg-danger',
+                                    F: 'bg-secondary',
+                                    G: 'bg-dark',
+                                    H: 'bg-light',
+                                    I: 'bg-primary',
+                                    J: 'bg-success',
+                                    K: 'bg-info',
+                                    L: 'bg-warning',
+                                    M: 'bg-danger',
+                                    N: 'bg-secondary',
+                                    O: 'bg-dark',
+                                    P: 'bg-light',
+                                    Q: 'bg-primary',
+                                    R: 'bg-success',
+                                    S: 'bg-info',
+                                    T: 'bg-warning',
+                                    U: 'bg-danger',
+                                    V: 'bg-secondary',
+                                    W: 'bg-dark',
+                                    X: 'bg-light',
+                                    Y: 'bg-primary',
+                                    Z: 'bg-success'
+                                };
+
+                                const firstLetter = row.title ? row.title.charAt(0).toUpperCase() : 'A';
+                                const bgColor = colors[firstLetter] || 'bg-secondary';
+
+                                return `
+                                    <div class="userimgname">
+                                        <a href="javascript:void(0);" class="product-img">
+                                            <span class="avatar ${bgColor} avatar-rounded">
+                                                <span class="avatar-title">${firstLetter}</span>
+                                            </span>
+                                        </a>
+                                        <div>
+                                            <a href="javascript:void(0);">${row.title}</a>
+                                        </div>
+                                    </div>
+                                `;
+                            }
+                        },
+                        {
+                            "data": "total_received"
+                        },
+                        {
+                            "data": "total_quantity"
+                        },
+                        {
+                            "data": "total_available"
+                        },
+                        {
+                            "data": "total_lost"
+                        }
+                    ],
+                    "createdRow": function (row, data, dataIndex) {
+                        $(row).find('td').eq(5).addClass('action-table-data');
+                    },
+                    "initComplete": function (settings, json) {
+                        $('.dataTables_filter').appendTo('#tableSearch');
+                        $('.dataTables_filter').appendTo('.search-input');
+                        feather.replace();
+
+                        $('.book_div_filter').on('change', function () {
+                            divisionTable.draw();
                         });
                     },
                     "drawCallback": function (settings) {

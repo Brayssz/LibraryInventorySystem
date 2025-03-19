@@ -2,7 +2,7 @@
   'use strict';
 
   $.mask.definitions['~'] = '[+-]';
-  $('#date').mask('99/99/9999');
+  // $('#date').mask('99/99/9999');
   $('#phone').mask('(999) 999-9999');
   $('#phoneExt').mask('(999) 999-9999? x99999');
   $('#iphone').mask('+33 999 999 999');

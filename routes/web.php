@@ -28,3 +28,5 @@ Route::get('/books', [BookController::class, 'showBooks'])->name('books');
 Route::get('/schools', [SchoolController::class, 'showSchools'])->name('schools');
 
 Route::get('/inventory', [InventoryController::class, 'showInventory'])->name('inventory');
+
+Route::get('/division-total', [InventoryController::class, 'showDivisionTotal'])->name('division-total');

@@ -35,7 +35,7 @@
 
     @vite(['resources/assets/css/style.css', 'resources/assets/css/sidebar.css'])
     {{-- @livewireStyles<!-- Styles - --}}
-   
+
 
 </head>
 
@@ -51,13 +51,21 @@
             <!-- Logo -->
             <div class="header-left active">
                 <a href="index.html" class="logo logo-normal">
-                    <img src="img/logo.jpg" alt="" style="max-height: 40px; max-width: 40px;" />
+                    <div class="d-flex align-items-center">
+                        <img src="img/logo.jpg" alt="" class="me-2" style="max-height: 40px; max-width: 40px;" />
+                        <div class="text-start">
+                            <h5 class="mb-2">LRMDS</h5>
+                            <p class="mb-0" style="font-size: 12px;">Koronadal City Division</p>
+                        </div>
+                    </div>
+
+
                 </a>
                 <a href="index.html" class="logo logo-white">
-                    <img src="assets/img/logo-white.png" alt="" />
+                    <img src="img/logo.jpg" alt="" style="min-height: 40px; min-width: 40px;"/>
                 </a>
                 <a href="index.html" class="logo-small">
-                    <img src="assets/img/logo-small.jpg" alt="" />
+                    <img src="img/logo.jpg" alt="" style="min-height: 40px; min-width: 40px;"/>
                 </a>
                 <a id="toggle_btn" href="javascript:void(0);">
                     <i data-feather="chevrons-left" class="feather-16"></i>
@@ -93,7 +101,8 @@
                         <span class="user-info">
                             <span class="user-letter">
                                 <span class="avatar avatar bg-success h-100">
-                                    <span class="avatar-title">{{ strtoupper(substr(Auth::user()->name, 0, 1)) . strtoupper(substr(explode(' ', Auth::user()->name)[1], 0, 1)) }}</span>
+                                    <span
+                                        class="avatar-title">{{ strtoupper(substr(Auth::user()->name, 0, 1)) . strtoupper(substr(explode(' ', Auth::user()->name)[1], 0, 1)) }}</span>
                                 </span>
                             </span>
                             <span class="user-detail">
@@ -109,16 +118,17 @@
                         <div class="profilename">
                             <div class="profileset">
                                 <span class="user-img">
-                                        <span class="avatar avatar-md bg-success">
-                                            <span class="avatar-title">{{ strtoupper(substr(Auth::user()->name, 0, 1)) . strtoupper(substr(explode(' ', Auth::user()->name)[1], 0, 1)) }}</span>
-                                        </span>
+                                    <span class="avatar avatar-md bg-success">
+                                        <span
+                                            class="avatar-title">{{ strtoupper(substr(Auth::user()->name, 0, 1)) . strtoupper(substr(explode(' ', Auth::user()->name)[1], 0, 1)) }}</span>
+                                    </span>
 
                                     <span class="status online"></span>
                                 </span>
                                 <div class="profilesets">
                                     <h6>{{ strtoupper(Auth::user()->name) }}
                                     </h6>
-                                        <h5>Administrator</h5>
+                                    <h5>Administrator</h5>
 
                                 </div>
                             </div>
@@ -313,7 +323,7 @@
             @yield('content')
         </div>
 
-        @livewire('content.layout')
+        {{-- @livewire('content.layout') --}}
 
     </div>
     <!-- jQuery -->
@@ -336,9 +346,8 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.30.1/moment.min.js"></script>
 
     <!-- Datetimepicker JS -->
-    <script
-        src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/6.3.3/js/bootstrap-datetimepicker.min.js">
-        </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/6.3.3/js/bootstrap-datetimepicker.min.js">
+    </script>
 
 
     <script>
@@ -376,6 +385,6 @@
 
 
 
-    </body>
+</body>
 
 </html>
