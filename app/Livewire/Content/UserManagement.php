@@ -54,6 +54,7 @@ class UserManagement extends Component
                 'email',
                 'max:255',
                 Rule::unique('users', 'email')->ignore($this->user_id, 'id'),
+                Rule::unique('schools', 'email'),
             ],
             'status' => 'nullable|string|max:255',
             'password' => $passwordRules,

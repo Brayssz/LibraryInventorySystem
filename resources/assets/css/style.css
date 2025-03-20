@@ -24319,6 +24319,12 @@ table tbody td.action-table-data a .action-edit {
   width: 14px;
   height: 14px;
 }
+
+table tbody td.action-table-data a .feather-book-open {
+  width: 14px;
+  height: 14px;
+}
+
 table tbody td.action-table-data a .feather-trash-2 {
   color: #FF0000;
   width: 14px;

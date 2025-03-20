@@ -11,9 +11,8 @@ class School extends Model
 
     protected $table = 'schools';
     protected $primaryKey = 'school_id';
-    protected $fillable = ['name', 'address', 'phone_number', 'email', 'status'];
+    protected $fillable = ['name', 'address', 'phone_number', 'email', 'status', 'password'];
 
-    // Relationship: A school has many inventory records
     public function inventory()
     {
         return $this->hasMany(Inventory::class, 'school_id', 'school_id');

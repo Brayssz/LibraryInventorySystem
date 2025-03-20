@@ -80,8 +80,43 @@
                                             @endif
                                         </div>
                                     </div>
+
+                                    <div class="pass-info">
+                                        <div class="card-title-head" wire:ignore>
+                                            <h6><span><i data-feather="info"
+                                                        class="feather-edit"></i></span>Password</h6>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-lg-6 col-md-6 input-blocks">
+                                                <label for="password">Password</label>
+                                                <div class="mb-3 pass-group">
+                                                    <input type="password" class="pass-input" id="password"
+                                                        wire:model.lazy="password"
+                                                        placeholder="Enter your password">
+                                                    <span class="fas toggle-password fa-eye-slash"></span>
+                                                </div>
+                                                @error('password')
+                                                    <span class="text-danger">{{ $message }}</span>
+                                                @enderror
+                                            </div>
+                                            <div class="col-lg-6 col-md-6 input-blocks">
+                                                <label for="password_confirmation">Confirm Password</label>
+                                                <div class="mb-3 pass-group">
+                                                    <input type="password" class="pass-inputa"
+                                                        id="password_confirmation"
+                                                        wire:model.lazy="password_confirmation"
+                                                        placeholder="Confirm your password">
+                                                    <span class="fas toggle-passworda fa-eye-slash"></span>
+                                                </div>
+                                                @error('password_confirmation')
+                                                    <span class="text-danger">{{ $message }}</span>
+                                                @enderror
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
+                            
                             <div class="modal-footer-btn mb-4 mt-0">
                                 <button type="button" class="btn btn-cancel me-2" data-bs-dismiss="modal">Cancel</button>
                                 <button type="submit" class="btn btn-submit">Submit</button>

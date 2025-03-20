@@ -5,6 +5,7 @@ use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Content\AppController;
 use App\Http\Controllers\Content\BookController;
 use App\Http\Controllers\Content\InventoryController;
+use App\Http\Controllers\Content\ReportController;
 use App\Http\Controllers\Content\SchoolController;
 use App\Http\Controllers\Content\UserController;
 
@@ -30,3 +31,9 @@ Route::get('/schools', [SchoolController::class, 'showSchools'])->name('schools'
 Route::get('/inventory', [InventoryController::class, 'showInventory'])->name('inventory');
 
 Route::get('/division-total', [InventoryController::class, 'showDivisionTotal'])->name('division-total');
+
+Route::get('/generate-report', [ReportController::class, 'exportInventoryReport'])->name('generate-report');
+
+Route::get('/get-report-data', [InventoryController::class, 'showGenerateReport'])->name('get-report-data');
+
+Route::get('/request-form', [AppController::class, 'showRequestForm'])->name('request-form');

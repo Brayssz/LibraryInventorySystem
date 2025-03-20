@@ -39,8 +39,23 @@ return new class extends Migration
             $table->string('address');
             $table->string('phone_number')->nullable();
             $table->string('email')->nullable();
+            $table->string('password');
             $table->string('status')->default('active');
             $table->timestamps();
+        });
+
+        Schema::create('book_requests', function (Blueprint $table) {
+            $table->id('request_id');
+            $table->unsignedBigInteger('school_id');
+            $table->unsignedBigInteger('book_id');
+            $table->integer('quantity');
+            $table->enum('status', ['pending', 'approved', 'rejected'])->default('pending');
+            $table->unsignedBigInteger('approved_by')->nullable();
+            $table->timestamps();
+
+            $table->foreign('school_id')->references('school_id')->on('schools')->onDelete('cascade');
+            $table->foreign('book_id')->references('book_id')->on('books')->onDelete('cascade');
+            $table->foreign('approved_by')->references('id')->on('users')->onDelete('set null');
         });
 
         Schema::create('inventory', function (Blueprint $table) {

@@ -14,7 +14,7 @@ class SchoolManagement extends Component
 
     public $total_schools;
 
-    public $school_id, $name, $address, $phone_number, $email, $status;
+    public $school_id, $name, $address, $phone_number, $email, $status, $password, $password_confirmation;
 
     public function getSchool($schoolId)
     {
@@ -27,6 +27,9 @@ class SchoolManagement extends Component
             $this->phone_number = $this->school->phone_number;
             $this->email = $this->school->email;
             $this->status = $this->school->status;
+
+            $this->password = null;
+            $this->password_confirmation = null;
         } else {
             session()->flash('error', 'School not found.');
         }
@@ -34,6 +37,10 @@ class SchoolManagement extends Component
 
     protected function rules()
     {
+        $passwordRules = $this->school_id
+            ? 'nullable|string|min:8|confirmed'
+            : 'required|string|min:8|confirmed';
+
         return [
             'name' => 'required|string|max:255',
             'address' => 'required|string|max:255',
@@ -43,8 +50,10 @@ class SchoolManagement extends Component
                 'email',
                 'max:255',
                 Rule::unique('schools', 'email')->ignore($this->school_id, 'school_id'),
+                Rule::unique('users', 'email'),
             ],
             'status' => 'nullable|string|max:255',
+            'password' => $passwordRules,
         ];
     }
 
@@ -56,7 +65,7 @@ class SchoolManagement extends Component
     public function resetFields()
     {
         $this->reset([
-            'name', 'address', 'phone_number', 'email', 'status'
+            'name', 'address', 'phone_number', 'email', 'status', 'password'
         ]);
     }
 
@@ -70,6 +79,7 @@ class SchoolManagement extends Component
                 'address' => $this->address,
                 'phone_number' => $this->phone_number,
                 'email' => $this->email,
+                'password' => bcrypt($this->password),
             ]);
 
             session()->flash('message', 'School successfully created.');
@@ -80,6 +90,10 @@ class SchoolManagement extends Component
             $this->school->phone_number = $this->phone_number;
             $this->school->email = $this->email;
             $this->school->status = $this->status;
+
+            if (isset($this->password)) {
+                $this->school->password = bcrypt($this->password);
+            }
 
             $this->school->save();
 
