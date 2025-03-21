@@ -17,6 +17,7 @@ class BookRequest extends Model
         'book_id',
         'quantity',
         'status',
+        'delivered_quantity',
         'approved_by',
     ];
 

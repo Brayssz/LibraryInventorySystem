@@ -49,6 +49,7 @@ return new class extends Migration
             $table->unsignedBigInteger('school_id');
             $table->unsignedBigInteger('book_id');
             $table->integer('quantity');
+            $table->integer('delivered_quantity')->default(0);
             $table->enum('status', ['pending', 'approved', 'rejected'])->default('pending');
             $table->unsignedBigInteger('approved_by')->nullable();
             $table->timestamps();

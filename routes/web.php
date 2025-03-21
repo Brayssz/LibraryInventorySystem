@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Content\AppController;
 use App\Http\Controllers\Content\BookController;
+use App\Http\Controllers\Content\BookRequestController;
 use App\Http\Controllers\Content\InventoryController;
 use App\Http\Controllers\Content\ReportController;
 use App\Http\Controllers\Content\SchoolController;
@@ -37,3 +38,5 @@ Route::get('/generate-report', [ReportController::class, 'exportInventoryReport'
 Route::get('/get-report-data', [InventoryController::class, 'showGenerateReport'])->name('get-report-data');
 
 Route::get('/request-form', [AppController::class, 'showRequestForm'])->name('request-form');
+
+Route::get('/book-request', [BookRequestController::class, 'showRequests'])->name('book-request');

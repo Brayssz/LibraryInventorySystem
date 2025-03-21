@@ -245,7 +245,7 @@ $(document).ready(function(){
 		setTimeout(function () {
 			$("#global-loader").fadeOut("slow");
 		}, 100);
-	}, 5000);
+	}, 1000);
 
 
 	// Datetimepicker

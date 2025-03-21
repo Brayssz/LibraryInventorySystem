@@ -24670,7 +24670,7 @@ td p.description-para {
 .product-quantity input {
   width: auto;
   border: 0;
-  background-color: #FAFBFE;
+  background-color: #fff;
   text-align: center;
   height: 35px !important;
 }

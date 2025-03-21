@@ -22,25 +22,31 @@
                             data-feather="chevron-up" class="feather-chevron-up"></i></a>
                 </li>
             </ul>
-            
+
+            <div class="page-btn">
+                <a class="btn btn-added btn-excel"><i data-feather="file-text"
+                        class="me-2"></i>Download Excel Copy</a>
+            </div>
+
         </div>
         <!-- /book list -->
         <div class="card table-list-card">
             <div class="card-body pb-0">
                 <div class="table-top table-top-two table-top-new d-flex ">
                     <div class="search-set mb-0 d-flex w-100 justify-content-start">
-                        
+
                         <div class="search-input text-left">
-                            <a href="" class="btn btn-searchset"><i data-feather="search" class="feather-search"></i></a>
+                            <a href="" class="btn btn-searchset"><i data-feather="search"
+                                    class="feather-search"></i></a>
                         </div>
 
                         <div class="row mt-sm-3 mt-xs-3 mt-lg-0 w-sm-100 flex-grow-1">
-                            
+
                             <div class="col-lg-4 col-sm-12">
                                 <div class="form-group">
                                     <select class="select school_filter form-control">
                                         <option value="">School</option>
-                                        @foreach($l_schools as $school)
+                                        @foreach ($l_schools as $school)
                                             <option value="{{ $school->school_id }}">{{ $school->name }}</option>
                                         @endforeach
                                     </select>
@@ -50,13 +56,13 @@
                                 <div class="form-group">
                                     <select class="select book_filter form-control">
                                         <option value="">Book</option>
-                                        @foreach($l_books as $book)
+                                        @foreach ($l_books as $book)
                                             <option value="{{ $book->book_id }}">{{ $book->title }}</option>
                                         @endforeach
                                     </select>
                                 </div>
                             </div>
-                           
+
                         </div>
 
                     </div>
@@ -85,8 +91,8 @@
         </div>
     </div>
     @livewire('content.receive-copies')
-    @livewire('content.add-lost')      
-    
+    @livewire('content.add-lost')
+
     <div class="content">
         <div class="page-header">
             <div class="add-item d-flex">
@@ -96,33 +102,34 @@
                 </div>
             </div>
             <ul class="table-top-head">
-              
+
             </ul>
-            
+
         </div>
         <!-- /book list -->
         <div class="card table-list-card">
             <div class="card-body pb-0">
                 <div class="table-top table-top-two table-top-new d-flex ">
                     <div class="search-set mb-0 d-flex w-100 justify-content-start">
-                        
+
                         <div class="search-input text-left">
-                            <a href="" class="btn btn-searchset"><i data-feather="search" class="feather-search"></i></a>
+                            <a href="" class="btn btn-searchset"><i data-feather="search"
+                                    class="feather-search"></i></a>
                         </div>
 
                         <div class="row mt-sm-3 mt-xs-3 mt-lg-0 w-sm-100 flex-grow-1">
-                            
+
                             <div class="col-lg-2 col-sm-12">
                                 <div class="form-group">
                                     <select class="select book_div_filter form-control">
                                         <option value="">Book</option>
-                                        @foreach($l_books as $book)
+                                        @foreach ($l_books as $book)
                                             <option value="{{ $book->book_id }}">{{ $book->title }}</option>
                                         @endforeach
                                     </select>
                                 </div>
                             </div>
-                           
+
                         </div>
 
                     </div>
@@ -133,7 +140,7 @@
                         <thead>
                             <tr>
                                 <th>Book</th>
-                                <th>Number of Copies Delivered</th> 
+                                <th>Number of Copies Delivered</th>
                                 <th>Actual Number of SLR's</th>
                                 <th>Available</th>
                                 <th>Lost/Missing</th>
@@ -153,7 +160,7 @@
 @endsection
 @push('scripts')
     <script>
-        $(document).ready(function () {
+        $(document).ready(function() {
 
             @if (session('message'))
                 toastr.success("{{ session('message') }}", "Success", {
@@ -185,14 +192,14 @@
                         "headers": {
                             "Accept": "application/json"
                         },
-                        "data": function (d) {
+                        "data": function(d) {
                             d.school_id = $('.school_filter').val();
                             d.book_id = $('.book_filter').val();
                         },
-                        "dataSrc": function (json) {
+                        "dataSrc": function(json) {
                             var data = [];
-                            json.data.forEach(function (item) {
-                                item.books.forEach(function (book) {
+                            json.data.forEach(function(item) {
+                                item.books.forEach(function(book) {
                                     data.push({
                                         book_id: item.book_id,
                                         school_id: item.school_id,
@@ -208,16 +215,15 @@
                             return data;
                         }
                     },
-                    "columns": [
-                        {
+                    "columns": [{
                             "data": null,
-                            "render": function (data, type, row) {
+                            "render": function(data, type, row) {
                                 return row.school;
                             }
                         },
                         {
                             "data": null,
-                            "render": function (data, type, row) {
+                            "render": function(data, type, row) {
                                 const colors = {
                                     A: 'bg-primary',
                                     B: 'bg-success',
@@ -247,7 +253,8 @@
                                     Z: 'bg-success'
                                 };
 
-                                const firstLetter = row.title ? row.title.charAt(0).toUpperCase() : 'A';
+                                const firstLetter = row.title ? row.title.charAt(0).toUpperCase() :
+                                    'A';
                                 const bgColor = colors[firstLetter] || 'bg-secondary';
 
                                 return `
@@ -275,7 +282,7 @@
                         },
                         {
                             "data": null,
-                            "render": function (data, type, row) {
+                            "render": function(data, type, row) {
                                 return `
                                     <div class="edit-delete-action">
                                         <a class="me-2 p-2 receive-copies" data-bookid="${row.book_id}" data-schoolid="${row.school_id}" data-inventoryid="${row.inventory_id}">
@@ -289,19 +296,20 @@
                             }
                         }
                     ],
-                    "createdRow": function (row, data, dataIndex) {
+                    "createdRow": function(row, data, dataIndex) {
                         $(row).find('td').eq(5).addClass('action-table-data');
                     },
-                    "initComplete": function (settings, json) {
+                    "initComplete": function(settings, json) {
                         $('.dataTables_filter').appendTo('#tableSearch');
                         $('.dataTables_filter').appendTo('.search-input');
                         feather.replace();
+                        hideLoader();
 
-                        $('.book_filter, .school_filter').on('change', function () {
+                        $('.book_filter, .school_filter').on('change', function() {
                             bookTable.ajax.reload();
                         });
                     },
-                    "drawCallback": function (settings) {
+                    "drawCallback": function(settings) {
                         feather.replace();
                     },
                 });
@@ -330,17 +338,16 @@
                         "headers": {
                             "Accept": "application/json"
                         },
-                        "data": function (d) {
+                        "data": function(d) {
                             d.book_id = $('.book_div_filter').val();
                         },
-                        "dataSrc": function (json) {
+                        "dataSrc": function(json) {
                             return json.data;
                         }
                     },
-                    "columns": [
-                        {
+                    "columns": [{
                             "data": null,
-                            "render": function (data, type, row) {
+                            "render": function(data, type, row) {
                                 const colors = {
                                     A: 'bg-primary',
                                     B: 'bg-success',
@@ -370,7 +377,8 @@
                                     Z: 'bg-success'
                                 };
 
-                                const firstLetter = row.title ? row.title.charAt(0).toUpperCase() : 'A';
+                                const firstLetter = row.title ? row.title.charAt(0).toUpperCase() :
+                                    'A';
                                 const bgColor = colors[firstLetter] || 'bg-secondary';
 
                                 return `
@@ -400,23 +408,51 @@
                             "data": "total_lost"
                         }
                     ],
-                    "createdRow": function (row, data, dataIndex) {
+                    "createdRow": function(row, data, dataIndex) {
                         $(row).find('td').eq(5).addClass('action-table-data');
                     },
-                    "initComplete": function (settings, json) {
+                    "initComplete": function(settings, json) {
                         $('.dataTables_filter').appendTo('#tableSearch');
                         $('.dataTables_filter').appendTo('.search-input');
                         feather.replace();
 
-                        $('.book_div_filter').on('change', function () {
+                        $('.book_div_filter').on('change', function() {
                             divisionTable.draw();
                         });
                     },
-                    "drawCallback": function (settings) {
+                    "drawCallback": function(settings) {
                         feather.replace();
                     },
                 });
             }
+
+            $('.btn-excel').click(function() {
+                showLoader();
+                $.ajax({
+                    url: 'generate-report',
+                    type: 'GET',
+                    success: function(response) {
+                        var link = document.createElement('a');
+                        link.href =
+                            'data:application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;base64,' +
+                            response.fileContent;
+                        link.download = response.fileName;
+                        document.body.appendChild(link);
+                        link.click();
+                        document.body.removeChild(link);
+                        hideLoader();
+                    },
+                    error: function() {
+                        toastr.error("Failed to generate report", "Error", {
+                            closeButton: true,
+                            progressBar: true,
+                        });
+                        hideLoader();
+                    }
+                });
+                
+            });
+
 
         });
     </script>

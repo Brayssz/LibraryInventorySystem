@@ -10,6 +10,7 @@ use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 use App\Models\Book;
 use App\Models\Inventory;
 use App\Models\School;
+use App\Models\InventoryTransaction;
 
 class ReportController extends Controller
 {
@@ -22,12 +23,22 @@ class ReportController extends Controller
             return response()->json(['error' => 'Template file not found!'], 404);
         }
 
-        // Load existing Excel template
         $spreadsheet = IOFactory::load($templatePath);
         $sheet = $spreadsheet->getActiveSheet();
 
         $response = $this->showGenerateReport(new Request());
         $reportData = json_decode($response->getContent(), true);
+
+        $columnIndex = 'G';
+        foreach ($reportData[0]['schools'] as $school) {
+            $sheet->setCellValue($columnIndex . '10', $school['school_name']);
+            $sheet->setCellValue($columnIndex . '11', 'No. of cps Received');
+            $columnIndex++;
+            $sheet->setCellValue($columnIndex . '11', 'Available');
+            $columnIndex++;
+            $sheet->setCellValue($columnIndex . '11', 'Missing/Lost');
+            $columnIndex++;
+        }
 
         $row = 13; 
         foreach ($reportData as $report) {
@@ -37,17 +48,6 @@ class ReportController extends Controller
             $sheet->setCellValue('D' . $row, $report['division_total']['actual_num_slrs']);
             $sheet->setCellValue('E' . $row, $report['division_total']['available']);
             $sheet->setCellValue('F' . $row, $report['division_total']['missing_lost']);
-
-            $columnIndex = 'G';
-            foreach ($reportData[0]['schools'] as $school) {
-                $sheet->setCellValue($columnIndex . '10', $school['school_name']);
-                $sheet->setCellValue($columnIndex . '11', 'No. of cps Received');
-                $columnIndex++;
-                $sheet->setCellValue($columnIndex . '11', 'Available');
-                $columnIndex++;
-                $sheet->setCellValue($columnIndex . '11', 'Missing/Lost');
-                $columnIndex++;
-            }
 
             $columnIndex = 'G';
             foreach ($report['schools'] as $school) {
@@ -64,16 +64,18 @@ class ReportController extends Controller
             $row++;
         }
 
-        // Generate and Download Updated Excel File
-        $fileName = 'SLRs_Inventory_Report.xlsx';
         $writer = new Xlsx($spreadsheet);
+        $tempFile = tempnam(sys_get_temp_dir(), 'inventory_report');
+        $writer->save($tempFile);
 
-        header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
-        header('Content-Disposition: attachment; filename="' . $fileName . '"');
-        header('Cache-Control: max-age=0');
+        $fileContent = file_get_contents($tempFile);
+        unlink($tempFile);
 
-        $writer->save('php://output');
-        exit;
+        $fileName = 'SLRs_Inventory_Report_' . now()->format('Ymd') . '.xlsx';
+        return response()->json([
+            'fileName' => $fileName,
+            'fileContent' => base64_encode($fileContent)
+        ]);
     }
 
     public function showGenerateReport(Request $request)
