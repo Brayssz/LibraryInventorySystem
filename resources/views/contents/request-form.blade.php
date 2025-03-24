@@ -35,7 +35,7 @@
                                 <th>Title</th>
                                 <th>Author</th>
                                 <th>ISBN</th>
-                                <th>Status</th>
+                                <th>Available Quantity</th>
                                 <th class="no-sort">Action</th>
                             </tr>
                         </thead>
@@ -83,7 +83,7 @@
                         info: "_START_ - _END_ of _TOTAL_ items",
                     },
                     "ajax": {
-                        "url": "/books",
+                        "url": "/available-books",
                         "type": "GET",
                         "headers": {
                             "Accept": "application/json"
@@ -152,12 +152,7 @@
                         "data": "isbn"
                     },
                     {
-                        "data": null,
-                        "render": function (data, type, row) {
-                            return row.status === "available" ?
-                                `<span class="badge badge-linesuccess">Available</span>` :
-                                `<span class="badge badge-linedanger">Unavailable</span>`;
-                        }
+                        "data": "inventory[0].quantity"
                     },
                     {
                         "data": null,

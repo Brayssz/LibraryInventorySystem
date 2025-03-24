@@ -10,7 +10,7 @@ use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 use App\Models\Book;
 use App\Models\Inventory;
 use App\Models\School;
-use App\Models\InventoryTransaction;
+use App\Models\BorrowTransaction;
 
 class ReportController extends Controller
 {
@@ -84,19 +84,24 @@ class ReportController extends Controller
         $books = $query->get();
 
         $data = $books->map(function ($book) {
-            $inventories = Inventory::where('book_id', $book->book_id)->get();
+            $divisionInventories = Inventory::where('book_id', $book->book_id)->where('location_type', 'division')->sum('quantity');
+            $inventories = Inventory::where('book_id', $book->book_id)->where('location_type', 'school')->get();
             $totalAvailable = $inventories->sum('quantity');
-            $totalReceived = $inventories->sum(function ($inventory) {
-                return $inventory->transactions()->where('transaction_type', 'received')->sum('quantity');
-            });
             $totalLost = $inventories->sum(function ($inventory) {
-                return $inventory->transactions()->where('transaction_type', 'lost')->sum('quantity');
+                return BorrowTransaction::whereHas('transaction', function ($query) use ($inventory) {
+                    $query->where('inventory_id', $inventory->inventory_id);
+                })->sum('quantity_lost');
             });
 
             $schools = School::where('status', 'active')->get()->map(function ($school) use ($book) {
-                $inventory = $school->inventory->firstWhere('book_id', $book->book_id);
-                $received = $inventory ? $inventory->transactions()->where('transaction_type', 'received')->sum('quantity') : 0;
-                $lost = $inventory ? $inventory->transactions()->where('transaction_type', 'lost')->sum('quantity') : 0;
+                $inventory = $school->inventory->firstWhere(function ($inv) use ($book) {
+                    return $inv->book_id == $book->book_id && $inv->location_type == 'school';
+                });
+                $received = $inventory ? $inventory->transactions()->where('transaction_type', 'receive')->sum('quantity') : 0;
+                $lost = $inventory ? BorrowTransaction::whereHas('transaction', function ($query) use ($inventory) {
+                    $query->where('inventory_id', $inventory->inventory_id);
+                })->sum('quantity_lost')
+                    : 0;
                 return [
                     'school_name' => $school->name,
                     'inventory' => [
@@ -113,7 +118,7 @@ class ReportController extends Controller
                 'title' => $book->title,
                 'date_of_inventory' => now()->format('Y-m-d'),
                 'division_total' => [
-                    'num_copies_delivered' => $totalReceived,
+                    'num_copies_delivered' => $divisionInventories,
                     'actual_num_slrs' => $totalAvailable + $totalLost,
                     'available' => $totalAvailable,
                     'missing_lost' => $totalLost

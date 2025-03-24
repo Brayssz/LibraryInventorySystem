@@ -84,6 +84,7 @@
 
                 @this.call('resetFields').then(() => {
                     @this.set('book_id', bookId);
+                    @this.set('quantity', 0);
                     $('#borrow-book-modal').modal('show');
                 });
             }

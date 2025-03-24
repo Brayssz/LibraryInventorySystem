@@ -7,6 +7,7 @@ use App\Http\Controllers\Content\BookController;
 use App\Http\Controllers\Content\BookRequestController;
 use App\Http\Controllers\Content\InventoryController;
 use App\Http\Controllers\Content\ReportController;
+use App\Http\Controllers\Content\ReturnController;
 use App\Http\Controllers\Content\SchoolController;
 use App\Http\Controllers\Content\UserController;
 
@@ -35,8 +36,12 @@ Route::get('/division-total', [InventoryController::class, 'showDivisionTotal'])
 
 Route::get('/generate-report', [ReportController::class, 'exportInventoryReport'])->name('generate-report');
 
-Route::get('/get-report-data', [InventoryController::class, 'showGenerateReport'])->name('get-report-data');
+Route::get('/get-report-data', [ReportController::class, 'showGenerateReport'])->name('get-report-data');
 
 Route::get('/request-form', [AppController::class, 'showRequestForm'])->name('request-form');
 
 Route::get('/book-request', [BookRequestController::class, 'showRequests'])->name('book-request');
+
+Route::get('/available-books', [BookRequestController::class, 'getAvailableBooks'])->name('available-books');
+
+Route::get('/borrowed-books', [ReturnController::class, 'showBorrowTransactions'])->name('borrowed-books');

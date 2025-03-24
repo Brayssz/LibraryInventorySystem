@@ -11,7 +11,7 @@ class School extends Model
 
     protected $table = 'schools';
     protected $primaryKey = 'school_id';
-    protected $fillable = ['name', 'address', 'phone_number', 'email', 'status'];
+    protected $fillable = ['name', 'address', 'phone_number', 'email', 'status', 'password'];
 
     protected $hidden = [
         'password',

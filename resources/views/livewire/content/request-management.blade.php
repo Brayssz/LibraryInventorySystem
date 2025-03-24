@@ -89,6 +89,8 @@
                 @this.call('resetFields').then(() => {
                     @this.call('approveRequest');
                     @this.set('request_id', requestId);
+
+                    @this.set('delivered_quantity', 0);
                     $('#receive-copies-modal').modal('show');
                 });
             }
@@ -103,6 +105,8 @@
                 }
 
                 @this.call('resetFields').then(() => {
+
+
                     
                     @this.set('request_id', requestId);
 

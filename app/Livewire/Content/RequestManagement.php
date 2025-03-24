@@ -4,9 +4,10 @@ namespace App\Livewire\Content;
 
 use Livewire\Component;
 use App\Models\BookRequest;
+use App\Models\BorrowTransaction;
 use Illuminate\Support\Facades\Auth;
-use App\Models\InventoryTransaction;
 use App\Models\Inventory;
+use App\Models\Transaction;
 
 class RequestManagement extends Component
 {
@@ -32,15 +33,15 @@ class RequestManagement extends Component
     {
         $this->validate();
 
-
         $bookRequest = BookRequest::find($this->request_id);
+
         if ($bookRequest) {
             if ($this->delivered_quantity > $bookRequest->quantity) {
                 $this->addError('delivered_quantity', 'The quantity must not be larger than the quantity of the requested book.');
                 return;
             }
             
-            $bookRequest->delivered_quantity = $this->delivered_quantity;
+            $bookRequest->quantity_released = $this->delivered_quantity;
             $bookRequest->status = 'approved';
             $bookRequest->approved_by = Auth::user()->id;
             $bookRequest->save();
@@ -52,8 +53,6 @@ class RequestManagement extends Component
 
         $this->updateInventory();
 
-        $this->resetFields();
-
         return redirect()->route('book-request');
     }
 
@@ -62,7 +61,7 @@ class RequestManagement extends Component
         if($bookRequest){
            
             $inventory = Inventory::where('book_id', $bookRequest->book_id)
-                ->where('school_id', $bookRequest->school_id)
+                ->where('location_id', $bookRequest->school_id)->where('location_type', 'school')
                 ->first();
 
             if($inventory){
@@ -71,23 +70,62 @@ class RequestManagement extends Component
             } else {
                 $inventory = Inventory::create([
                     'book_id' => $bookRequest->book_id,
-                    'school_id' => $bookRequest->school_id,
+                    'location_id' => $bookRequest->school_id,
+                    'location_type' => 'school',
                     'quantity' => $this->delivered_quantity,
                 ]);
             }
 
+            $this->updateDivisionInventory();
             $this->createInventoryTransaction($inventory->inventory_id);
         }
     }
 
+    public function updateDivisionInventory() 
+    {
+        $bookRequest = BookRequest::find($this->request_id);
+        $inventory = Inventory::find($bookRequest->book_id)->where('location_type', 'division')->first();
+
+        if($inventory) {
+            if ($this->delivered_quantity > $inventory->quantity) {
+                $this->addError('delivered_quantity', 'The quantity must not be larger than the available quantity in the inventory. Current available quantity: ' . $inventory->quantity);
+                return;
+            }
+            $inventory->quantity -= $this->delivered_quantity;
+            $inventory->save();
+        } 
+    }
+
+    public function createBorrowTransaction($transaction_id) 
+    {
+        $bookRequest = BookRequest::find($this->request_id);
+        
+        BorrowTransaction::create([
+            'book_id' => $bookRequest->book_id,
+            'user_id' => $bookRequest->approved_by,
+            'transaction_id' => $transaction_id,
+            'borrow_timestamp' => now(),
+            'return_date' => null, // or set a specific return date if available
+            'quantity_lost' => 0,
+            'status' => 'borrowed',
+        ]);
+
+    }
+
     public function createInventoryTransaction($inventory_id)
     {
-        InventoryTransaction::create([
+        $bookRequest = BookRequest::find($this->request_id);
+        
+        $transaction = Transaction::create([
             'inventory_id' => $inventory_id,
-            'transaction_type' => 'received',
+            'transaction_type' => 'receive',
             'quantity' => $this->delivered_quantity,
             'approved_by' => Auth::user()->id,
+            'reference_id' => $bookRequest->reference_id,
+            'transaction_timestamp' => now(),
         ]);
+
+        $this->createBorrowTransaction($transaction->transaction_id);
     }
 
     public function resetFields()

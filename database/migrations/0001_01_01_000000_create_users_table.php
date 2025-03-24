@@ -52,10 +52,13 @@ return new class extends Migration
             $table->unsignedBigInteger('school_id');
             $table->unsignedBigInteger('book_id');
             $table->integer('quantity');
+            $table->integer('quantity_released')->default(0);
             $table->enum('status', ['pending', 'approved', 'rejected'])->default('pending');
             $table->unsignedBigInteger('approved_by')->nullable();
+            $table->unsignedBigInteger('reference_id')->nullable();
             $table->timestamps();
 
+            $table->foreign('reference_id')->references('reference_id')->on('reference_codes')->onDelete('set null');
             $table->foreign('school_id')->references('school_id')->on('schools')->onDelete('cascade');
             $table->foreign('book_id')->references('book_id')->on('books')->onDelete('cascade');
             $table->foreign('approved_by')->references('id')->on('users')->onDelete('set null');
@@ -92,7 +95,7 @@ return new class extends Migration
             $table->id('borrow_id');
             $table->unsignedBigInteger('book_id');
             $table->unsignedBigInteger('user_id');
-            $table->unsignedBigInteger('transaction_id')->nullable(); // Refers to the release transaction
+            $table->unsignedBigInteger('transaction_id')->nullable(); 
             $table->timestamp('borrow_timestamp');
             $table->timestamp('return_date')->nullable();
             $table->integer('quantity_lost')->default(0);

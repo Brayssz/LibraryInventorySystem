@@ -3,13 +3,12 @@
 @section('title', 'Book Management')
 
 @section('content')
-
     <div class="content">
         <div class="page-header">
             <div class="add-item d-flex">
                 <div class="page-title">
-                    <h4>Schools Inventory</h4>
-                    <h6>Manage Schools Inventory</h6>
+                    <h4>DIVISION TOTAL</h4>
+                    <h6>Review Division total</h6>
                 </div>
             </div>
             <ul class="table-top-head">
@@ -24,9 +23,70 @@
             </ul>
 
             <div class="page-btn">
-                <a class="btn btn-added btn-excel"><i data-feather="file-text"
-                        class="me-2"></i>Download Excel Copy</a>
+                <a class="btn btn-added btn-excel"><i data-feather="file-text" class="me-2"></i>Download Excel Copy</a>
             </div>
+
+        </div>
+        <!-- /book list -->
+        <div class="card table-list-card">
+            <div class="card-body pb-0">
+                <div class="table-top table-top-two table-top-new d-flex ">
+                    <div class="search-set mb-0 d-flex w-100 justify-content-start">
+
+                        <div class="search-input text-left">
+                            <a href="" class="btn btn-searchset"><i data-feather="search"
+                                    class="feather-search"></i></a>
+                        </div>
+
+                        <div class="row mt-sm-3 mt-xs-3 mt-lg-0 w-sm-100 flex-grow-1">
+
+                            <div class="col-lg-2 col-sm-12">
+                                <div class="form-group">
+                                    <select class="select book_div_filter form-control">
+                                        <option value="">Book</option>
+                                        @foreach ($l_books as $book)
+                                            <option value="{{ $book->book_id }}">{{ $book->title }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                            </div>
+
+                        </div>
+
+                    </div>
+                </div>
+
+                <div class="table-responsive">
+                    <table class="table division-table pb-3">
+                        <thead>
+                            <tr>
+                                <th>Book</th>
+                                <th>Number of Copies Delivered / Qty On Division</th>
+                                <th>Actual Number of SLR's</th>
+                                <th>Available</th>
+                                <th>Lost/Missing</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="content">
+        <div class="page-header">
+            <div class="add-item d-flex">
+                <div class="page-title">
+                    <h4>Schools Inventory</h4>
+                    <h6>Manage Schools Inventory</h6>
+                </div>
+            </div>
+           
 
         </div>
         <!-- /book list -->
@@ -77,7 +137,6 @@
                                 <th>Number of copies received</th>
                                 <th>Available</th>
                                 <th>Lost/Missing</th>
-                                <th class="no-sort">Action</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -90,77 +149,10 @@
             </div>
         </div>
     </div>
-    {{-- @livewire('content.receive-copies')
-    @livewire('content.add-lost') --}}
+    @livewire('content.receive-delivery')
+    {{-- @livewire('content.add-lost') --}}
 
-    <div class="content">
-        <div class="page-header">
-            <div class="add-item d-flex">
-                <div class="page-title">
-                    <h4>DIVISION TOTAL</h4>
-                    <h6>Review Division total</h6>
-                </div>
-            </div>
-            <ul class="table-top-head">
 
-            </ul>
-            <div class="page-btn">
-                <a class="btn btn-added btn-delivery"><i data-feather="file-text"
-                        class="me-2"></i>Receive Delivery</a>
-            </div>
-
-        </div>
-        <!-- /book list -->
-        <div class="card table-list-card">
-            <div class="card-body pb-0">
-                <div class="table-top table-top-two table-top-new d-flex ">
-                    <div class="search-set mb-0 d-flex w-100 justify-content-start">
-
-                        <div class="search-input text-left">
-                            <a href="" class="btn btn-searchset"><i data-feather="search"
-                                    class="feather-search"></i></a>
-                        </div>
-
-                        <div class="row mt-sm-3 mt-xs-3 mt-lg-0 w-sm-100 flex-grow-1">
-
-                            <div class="col-lg-2 col-sm-12">
-                                <div class="form-group">
-                                    <select class="select book_div_filter form-control">
-                                        <option value="">Book</option>
-                                        @foreach ($l_books as $book)
-                                            <option value="{{ $book->book_id }}">{{ $book->title }}</option>
-                                        @endforeach
-                                    </select>
-                                </div>
-                            </div>
-
-                        </div>
-
-                    </div>
-                </div>
-
-                <div class="table-responsive">
-                    <table class="table division-table pb-3">
-                        <thead>
-                            <tr>
-                                <th>Book</th>
-                                <th>Number of Copies Delivered</th>
-                                <th>Actual Number of SLR's</th>
-                                <th>Available</th>
-                                <th>Lost/Missing</th>
-                                <th>Action</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        </div>
-    </div>
 
 @endsection
 @push('scripts')
@@ -284,22 +276,22 @@
                         },
                         {
                             "data": "lost"
-                        },
-                        {
-                            "data": null,
-                            "render": function(data, type, row) {
-                                return `
-                                    <div class="edit-delete-action">
-                                        <a class="me-2 p-2 receive-copies" data-bookid="${row.book_id}" data-schoolid="${row.school_id}" data-inventoryid="${row.inventory_id}">
-                                            <i data-feather="download" class="feather-download"></i>
-                                        </a>
-                                        <a class="me-2 p-2 lost-copies" data-inventoryid="${row.inventory_id}">
-                                            <i data-feather="alert-circle" class="feather-alert-circle"></i>
-                                        </a>
-                                    </div>
-                                `;
-                            }
                         }
+                        // {
+                        //     "data": null,
+                        //     "render": function(data, type, row) {
+                        //         return `
+                        //             <div class="edit-delete-action">
+                        //                 <a class="me-2 p-2 receive-copies" data-bookid="${row.book_id}" data-schoolid="${row.school_id}" data-inventoryid="${row.inventory_id}">
+                        //                     <i data-feather="download" class="feather-download"></i>
+                        //                 </a>
+                        //                 <a class="me-2 p-2 lost-copies" data-inventoryid="${row.inventory_id}">
+                        //                     <i data-feather="alert-circle" class="feather-alert-circle"></i>
+                        //                 </a>
+                        //             </div>
+                        //         `;
+                        //     }
+                        // }
                     ],
                     "createdRow": function(row, data, dataIndex) {
                         $(row).find('td').eq(5).addClass('action-table-data');
@@ -467,7 +459,7 @@
                         hideLoader();
                     }
                 });
-                
+
             });
 
 

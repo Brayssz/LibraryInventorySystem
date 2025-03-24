@@ -201,21 +201,19 @@
                                 <li class="{{ Request::is('book-request') ? 'active' : '' }}">
                                     <a href="/book-request"><i data-feather="book-open"></i><span>Book Request</span></a>
                                 </li>
-                              
-                               
-
+                                <li class="{{ Request::is('borrowed-books') ? 'active' : '' }}">
+                                    <a href="/borrowed-books"><i data-feather="corner-up-left"></i><span>Return Books</span></a>
+                                </li>
                             </ul>
                         </li>
                         <li class="submenu-open">
                             <h6 class="submenu-hdr">Reports</h6>
                             <ul>
                                 <li>
-                                    <a href="manage-stocks.html"><i data-feather="package"></i><span>Branch
-                                            Performance Report</span></a>
+                                    <a href="manage-stocks.html"><i data-feather="package"></i><span>Book Deliveries Report</span></a>
                                 </li>
                                 <li>
-                                    <a href="stock-adjustment.html"><i data-feather="clipboard"></i><span>Deployment
-                                            Report</span></a>
+                                    <a href="stock-adjustment.html"><i data-feather="clipboard"></i><span>Book Request Report</span></a>
                                 </li>
                                 <li>
                                     <a href="stock-transfer.html"><i data-feather="truck"></i><span>Report

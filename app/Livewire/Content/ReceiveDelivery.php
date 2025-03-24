@@ -5,6 +5,7 @@ namespace App\Livewire\Content;
 use Livewire\Component;
 use App\Models\Transaction;
 use App\Models\Inventory;
+use App\Models\ReferenceCode;
 use Illuminate\Support\Facades\Auth;
 
 
@@ -41,12 +42,16 @@ class ReceiveDelivery extends Component
             $inventory->save();
         }
 
+        $reference = ReferenceCode::create([
+            'reference_code' => $this->generateReferenceCode()
+        ]);
+
         Transaction::create([
             'inventory_id' => $inventory->inventory_id,
             'quantity' => $this->quantity,
             'transaction_type' => 'delivery',
             'approved_by' => Auth::user()->id, 
-            'reference_id' => null, 
+            'reference_id' => $reference->reference_id, 
             'transaction_timestamp' => now(),
         ]);
 
@@ -55,6 +60,12 @@ class ReceiveDelivery extends Component
         $this->resetFields();
 
         return redirect()->route('inventory');
+    }
+
+    public function generateReferenceCode()
+    {
+        
+        return 'KORLRMDS-' . now()->format('YmdHis');
     }
 
     public function resetFields()

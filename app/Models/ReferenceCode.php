@@ -17,4 +17,10 @@ class ReferenceCode extends Model
     {
         return $this->hasMany(Transaction::class, 'reference_id');
     }
+
+    public function bookRequests()
+    {
+        return $this->hasMany(BookRequest::class, 'reference_id');
+    }
 }
+

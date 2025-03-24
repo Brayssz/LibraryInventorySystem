@@ -12,7 +12,7 @@ class BookRequest extends Model
     protected $primaryKey = 'request_id';
 
     protected $fillable = [
-        'school_id', 'book_id', 'quantity', 'status', 'approved_by',
+        'school_id', 'book_id', 'quantity', 'quantity_released', 'status', 'approved_by', 'reference_id',
     ];
 
     public function school()
@@ -29,4 +29,10 @@ class BookRequest extends Model
     {
         return $this->belongsTo(User::class, 'approved_by');
     }
+
+    public function referenceCode()
+    {
+        return $this->belongsTo(ReferenceCode::class, 'reference_id');
+    }
+
 }

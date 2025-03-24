@@ -1,25 +1,25 @@
-<div class="modal fade" id="receive-delivery-modal" wire:ignore.self>
+<div class="modal fade" id="partial-modal" wire:ignore.self>
     <div class="modal-dialog modal-dialog-centered modal-lg custom-modal-two">
         <div class="modal-content">
             <div class="page-wrapper-new p-0">
                 <div class="content">
                     <div class="modal-header border-0 custom-modal-header">
                         <div class="page-title">
-                            <h4>Receive Copies</h4>
+                            <h4>Patially Return Books</h4>
                         </div>
                         <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
                         </button>
                     </div>
                     <div class="modal-body">
-                        <form wire:submit.prevent="receiveDelivery">
+                        <form wire:submit.prevent="returnPartial">
                             @csrf
                             <div class="card mb-0">
                                 <div class="card-body">
                                     <div class="new-book-field">
                                         <div class="card-title-head" wire:ignore>
-                                            <h6><span><i data-feather="info" class="feather-edit"></i></span>Receive
-                                                Copies Information</h6>
+                                            <h6><span><i data-feather="info" class="feather-edit"></i></span>Return
+                                                Information</h6>
                                         </div>
                                         <div class="row">
                                             <div class="col-lg-6 col-md-6">
@@ -47,11 +47,13 @@
                                                     <label class="form-label" for="quantity">Quantity</label>
 
                                                     <div class="product-quantity px-4" wire:ignore>
-                                                        <span class="quantity-btn me-auto">+<i data-feather="plus-circle"
+                                                        <span class="quantity-btn me-auto">+<i
+                                                                data-feather="plus-circle"
                                                                 class="plus-circle"></i></span>
                                                         <input type="number" class="quntity-input not_pass"
                                                             id="quantity" wire:model.lazy="quantity">
-                                                        <span class="quantity-btn ms-auto"><i data-feather="minus-circle"
+                                                        <span class="quantity-btn ms-auto"><i
+                                                                data-feather="minus-circle"
                                                                 class="feather-search"></i></span>
                                                     </div>
 
@@ -60,7 +62,7 @@
                                                     @enderror
                                                 </div>
                                             </div>
-                                            
+
                                         </div>
                                     </div>
                                 </div>
@@ -91,7 +93,8 @@
 
             function handleReceiveCopiesActions() {
                 $(document).on('change', '[id]:not([type="date"]):not([type="time"])', handleInputChange);
-                $(document).on('click', '.receive-delivery', openReceiveDeliveryModal);
+                $(document).on('click', '.partial-return-book', openPartialReturnModal);
+                $(document).on('click', '.return-book', returnBook);
             }
 
             function handleInputChange(e) {
@@ -104,20 +107,48 @@
                 }
             }
 
-            function openReceiveDeliveryModal() {
+            const returnBook = function() {
+                var borrowId = $(this).data('borrowid');
+                var schoolId = $(this).data('schoolid');
+                var status = $(this).data('status');
 
-                var bookId = $(this).data('bookid');
+                @this.set('borrow_id', borrowId);
+                @this.set('school_id', schoolId);
 
-                @this.set('book_id', bookId);
+                if(status === "returned") {
+                    messageAlert('Invalid Action', 'Request already returned.');
+                    return;
+                }
+
+                confirmAlert("Are You Sure?",
+                    "Are you sure you want to finalize return transaction, you wont able to revert this.",
+                    function() {
+                        @this.call('returnBooks');
+                    }, "Yes");
+            }
+
+            function openPartialReturnModal() {
+
+                var borrowId = $(this).data('borrowid');
+                var schoolId = $(this).data('schoolid');
+                var status = $(this).data('status');
+
+                @this.set('borrow_id', borrowId);
+                @this.set('school_id', schoolId);
+
+                if(status === "returned") {
+                    messageAlert('Invalid Action', 'Request already returned.');
+                    return;
+                }
+
+                console.log(schoolId);
 
                 @this.call('resetFields').then(() => {
 
                     @this.set('quantity', 0);
-                    $('#receive-delivery-modal').modal('show');
+                    $('#partial-modal').modal('show');
                 });
             }
-           
         </script>
     @endpush
 </div>
-
