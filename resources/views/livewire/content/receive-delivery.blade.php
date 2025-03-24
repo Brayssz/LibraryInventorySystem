@@ -1,30 +1,51 @@
-<div class="modal fade" id="borrow-book-modal" wire:ignore.self>
-    <div class="modal-dialog modal-dialog-centered modal-mdM custom-modal-two">
+<div class="modal fade" id="receive-delivery-modal" wire:ignore.self>
+    <div class="modal-dialog modal-dialog-centered modal-lg custom-modal-two">
         <div class="modal-content">
             <div class="page-wrapper-new p-0">
                 <div class="content">
                     <div class="modal-header border-0 custom-modal-header">
                         <div class="page-title">
-                            <h4>Borrow Book</h4>
+                            <h4>Receive Copies</h4>
                         </div>
                         <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
                         </button>
                     </div>
                     <div class="modal-body">
-                        <form wire:submit.prevent="submit">
+                        <form wire:submit.prevent="receiveDelivery">
                             @csrf
-                            <input type="hidden" wire:model="book_id">
                             <div class="card mb-0">
                                 <div class="card-body">
                                     <div class="new-book-field">
                                         <div class="card-title-head" wire:ignore>
-                                            <h6><span><i data-feather="info" class="feather-edit"></i></span>Borrow Book Information</h6>
+                                            <h6><span><i data-feather="info" class="feather-edit"></i></span>Receive
+                                                Copies Information</h6>
                                         </div>
                                         <div class="row">
+                                            <div class="col-lg-6 col-md-6">
+                                                <div class="mb-3">
+                                                    <label class="form-label" for="date">Date</label>
+                                                    <input type="date" class="form-control" placeholder="Enter date"
+                                                        id="date" wire:model.lazy="date">
+                                                    @error('date')
+                                                        <span class="text-danger">{{ $message }}</span>
+                                                    @enderror
+                                                </div>
+                                            </div>
+                                            <div class="col-lg-6 col-md-6">
+                                                <div class="mb-3">
+                                                    <label class="form-label" for="time">Time</label>
+                                                    <input type="time" class="form-control" placeholder="Enter time"
+                                                        id="time" wire:model.lazy="time">
+                                                    @error('time')
+                                                        <span class="text-danger">{{ $message }}</span>
+                                                    @enderror
+                                                </div>
+                                            </div>
                                             <div class="col-lg-12 col-md-12">
                                                 <div class="mb-3">
                                                     <label class="form-label" for="quantity">Quantity</label>
+
                                                     <div class="product-quantity px-4" wire:ignore>
                                                         <span class="quantity-btn me-auto">+<i data-feather="plus-circle"
                                                                 class="plus-circle"></i></span>
@@ -33,11 +54,13 @@
                                                         <span class="quantity-btn ms-auto"><i data-feather="minus-circle"
                                                                 class="feather-search"></i></span>
                                                     </div>
+
                                                     @error('quantity')
                                                         <span class="text-danger">{{ $message }}</span>
                                                     @enderror
                                                 </div>
                                             </div>
+                                            
                                         </div>
                                     </div>
                                 </div>
@@ -56,12 +79,19 @@
     @push('scripts')
         <script>
             document.addEventListener('DOMContentLoaded', () => {
-                handleBorrowBookActions();
+                handleReceiveCopiesActions();
             });
 
-            function handleBorrowBookActions() {
+            function initSelect() {
+                $('.select').select2({
+                    minimumResultsForSearch: -1,
+                    width: '100%'
+                });
+            }
+
+            function handleReceiveCopiesActions() {
                 $(document).on('change', '[id]:not([type="date"]):not([type="time"])', handleInputChange);
-                $(document).on('click', '.borrow-book', openBorrowBookModal);
+                $(document).on('click', '.receive-delivery', openReceiveDeliveryModal);
             }
 
             function handleInputChange(e) {
@@ -74,19 +104,19 @@
                 }
             }
 
-            function openBorrowBookModal() {
-                const bookId = $(this).data('bookid');
+            function openReceiveDeliveryModal() {
 
-                if(bookId === null) {
-                    messageAlert('Invalid Action', 'No Available Copies.');
-                    return;
-                }
+                var bookId = $(this).data('bookid');
+
+                @this.set('book_id', bookId);
 
                 @this.call('resetFields').then(() => {
-                    @this.set('book_id', bookId);
-                    $('#borrow-book-modal').modal('show');
+
+                    $('#receive-delivery-modal').modal('show');
                 });
             }
+           
         </script>
     @endpush
 </div>
+

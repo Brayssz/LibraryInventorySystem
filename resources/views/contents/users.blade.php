@@ -208,6 +208,7 @@
                         $('.dataTables_filter').appendTo('#tableSearch');
                         $('.dataTables_filter').appendTo('.search-input');
                         feather.replace();
+                        hideLoader();
 
                         $('.status_filter').on('change', function () {
                             table.draw();

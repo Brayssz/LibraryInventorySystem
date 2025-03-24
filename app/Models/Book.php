@@ -13,8 +13,18 @@ class Book extends Model
     protected $primaryKey = 'book_id';
     protected $fillable = ['title', 'author', 'isbn', 'published_year', 'status'];
 
-    public function inventories()
+    public function bookRequests()
     {
-        return $this->hasMany(Inventory::class, 'book_id', 'book_id');
+        return $this->hasMany(BookRequest::class);
+    }
+
+    public function inventory()
+    {
+        return $this->hasMany(Inventory::class);
+    }
+
+    public function borrowTransactions()
+    {
+        return $this->hasMany(BorrowTransaction::class);
     }
 }

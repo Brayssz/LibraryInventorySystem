@@ -90,8 +90,8 @@
             </div>
         </div>
     </div>
-    @livewire('content.receive-copies')
-    @livewire('content.add-lost')
+    {{-- @livewire('content.receive-copies')
+    @livewire('content.add-lost') --}}
 
     <div class="content">
         <div class="page-header">
@@ -104,6 +104,10 @@
             <ul class="table-top-head">
 
             </ul>
+            <div class="page-btn">
+                <a class="btn btn-added btn-delivery"><i data-feather="file-text"
+                        class="me-2"></i>Receive Delivery</a>
+            </div>
 
         </div>
         <!-- /book list -->
@@ -144,6 +148,7 @@
                                 <th>Actual Number of SLR's</th>
                                 <th>Available</th>
                                 <th>Lost/Missing</th>
+                                <th>Action</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -406,6 +411,18 @@
                         },
                         {
                             "data": "total_lost"
+                        },
+                        {
+                            "data": null,
+                            "render": function(data, type, row) {
+                                return `
+                                    <div class="edit-delete-action">
+                                        <a class="me-2 p-2 receive-delivery" data-bookid="${row.book_id}">
+                                            <i data-feather="download" class="feather-download"></i>
+                                        </a>
+                                    </div>
+                                `;
+                            }
                         }
                     ],
                     "createdRow": function(row, data, dataIndex) {

@@ -47,8 +47,23 @@ class User extends Authenticatable
             'password' => 'hashed',
         ];
     }
+    public function approvedBookRequests()
+    {
+        return $this->hasMany(BookRequest::class, 'approved_by');
+    }
+
     public function approvedTransactions()
     {
-        return $this->hasMany(InventoryTransaction::class, 'approved_by', 'id');
+        return $this->hasMany(Transaction::class, 'approved_by');
+    }
+
+    public function borrowTransactions()
+    {
+        return $this->hasMany(BorrowTransaction::class);
+    }
+
+    public function recordedReturns()
+    {
+        return $this->hasMany(ReturnTransaction::class, 'recorded_by');
     }
 }

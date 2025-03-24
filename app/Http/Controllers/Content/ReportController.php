@@ -114,7 +114,7 @@ class ReportController extends Controller
                 'date_of_inventory' => now()->format('Y-m-d'),
                 'division_total' => [
                     'num_copies_delivered' => $totalReceived,
-                    'actual_num_slrs' => $totalReceived + $totalLost,
+                    'actual_num_slrs' => $totalAvailable + $totalLost,
                     'available' => $totalAvailable,
                     'missing_lost' => $totalLost
                 ],

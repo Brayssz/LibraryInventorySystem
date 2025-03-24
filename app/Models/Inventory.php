@@ -9,25 +9,24 @@ class Inventory extends Model
 {
     use HasFactory;
 
-    protected $table = 'inventory';
     protected $primaryKey = 'inventory_id';
-    protected $fillable = ['book_id', 'school_id', 'quantity'];
 
-    // Relationship: Each inventory belongs to a school
-    public function school()
-    {
-        return $this->belongsTo(School::class, 'school_id', 'school_id');
-    }
+    protected $fillable = [
+        'book_id', 'location_id', 'location_type', 'quantity',
+    ];
 
-    // Relationship: Each inventory belongs to a book
     public function book()
     {
-        return $this->belongsTo(Book::class, 'book_id', 'book_id');
+        return $this->belongsTo(Book::class, 'book_id');
     }
 
-    // Relationship: An inventory can have many transactions
+    public function location()
+    {
+        return $this->belongsTo(School::class, 'location_id');
+    }
+
     public function transactions()
     {
-        return $this->hasMany(InventoryTransaction::class, 'inventory_id', 'inventory_id');
+        return $this->hasMany(Transaction::class, 'inventory_id');
     }
 }

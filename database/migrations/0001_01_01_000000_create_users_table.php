@@ -6,9 +6,6 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
     public function up(): void
     {
         Schema::create('users', function (Blueprint $table) {
@@ -18,7 +15,7 @@ return new class extends Migration
             $table->string('email')->unique();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
-            $table->string('status')->default('active');
+            $table->string('status')->default('active'); 
             $table->rememberToken();
             $table->timestamps();
         });
@@ -44,12 +41,17 @@ return new class extends Migration
             $table->timestamps();
         });
 
+        Schema::create('reference_codes', function (Blueprint $table) {
+            $table->id('reference_id');
+            $table->string('reference_code')->unique();
+            $table->timestamps();
+        });
+
         Schema::create('book_requests', function (Blueprint $table) {
             $table->id('request_id');
             $table->unsignedBigInteger('school_id');
             $table->unsignedBigInteger('book_id');
             $table->integer('quantity');
-            $table->integer('delivered_quantity')->default(0);
             $table->enum('status', ['pending', 'approved', 'rejected'])->default('pending');
             $table->unsignedBigInteger('approved_by')->nullable();
             $table->timestamps();
@@ -61,55 +63,58 @@ return new class extends Migration
 
         Schema::create('inventory', function (Blueprint $table) {
             $table->id('inventory_id');
-            $table->unsignedBigInteger('book_id')->nullable();
-            $table->unsignedBigInteger('school_id')->nullable();
+            $table->unsignedBigInteger('book_id');
+            $table->unsignedBigInteger('location_id')->nullable(); // Can be school_id or NULL (for division)
+            $table->enum('location_type', ['division', 'school']);
             $table->integer('quantity');
             $table->timestamps();
 
-            $table->foreign('book_id')->references('book_id')->on('books')->onDelete('set null');
-            $table->foreign('school_id')->references('school_id')->on('schools')->onDelete('set null');
+            $table->foreign('book_id')->references('book_id')->on('books')->onDelete('cascade');
+            $table->foreign('location_id')->references('school_id')->on('schools')->onDelete('cascade');
         });
 
-        Schema::create('inventory_transactions', function (Blueprint $table) {
+        Schema::create('transactions', function (Blueprint $table) {
             $table->id('transaction_id');
-            $table->unsignedBigInteger('inventory_id')->nullable();
-            $table->enum('transaction_type', ['received', 'lost']);
+            $table->unsignedBigInteger('inventory_id');
             $table->integer('quantity');
+            $table->enum('transaction_type', ['release', 'delivery', 'receive']);
             $table->unsignedBigInteger('approved_by')->nullable();
-            $table->string('reference_number')->unique()->nullable();
-            $table->date('date')->nullable();
-            $table->time('time')->nullable();
+            $table->unsignedBigInteger('reference_id')->nullable();
+            $table->timestamp('transaction_timestamp')->nullable();
             $table->timestamps();
 
-            $table->foreign('inventory_id')->references('inventory_id')->on('inventory')->onDelete('set null');
+            $table->foreign('inventory_id')->references('inventory_id')->on('inventory')->onDelete('cascade');
             $table->foreign('approved_by')->references('id')->on('users')->onDelete('set null');
+            $table->foreign('reference_id')->references('reference_id')->on('reference_codes')->onDelete('set null');
         });
 
-        // Schema::create('division_inventory', function (Blueprint $table) {
-        //     $table->id('div_inventory_id');
-        //     $table->unsignedBigInteger('book_id')->nullable();
-        //     $table->integer('quantity');
-        //     $table->timestamps();
+        Schema::create('borrow_transactions', function (Blueprint $table) {
+            $table->id('borrow_id');
+            $table->unsignedBigInteger('book_id');
+            $table->unsignedBigInteger('user_id');
+            $table->unsignedBigInteger('transaction_id')->nullable(); // Refers to the release transaction
+            $table->timestamp('borrow_timestamp');
+            $table->timestamp('return_date')->nullable();
+            $table->integer('quantity_lost')->default(0);
+            $table->enum('status', ['borrowed', 'partially_returned', 'returned'])->default('borrowed');
+            $table->timestamps();
 
-        //     $table->foreign('book_id')->references('book_id')->on('books')->onDelete('set null');
-        // });
+            $table->foreign('book_id')->references('book_id')->on('books')->onDelete('cascade');
+            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
+            $table->foreign('transaction_id')->references('transaction_id')->on('transactions')->onDelete('set null');
+        });
 
-        // Schema::create('division_transactions', function (Blueprint $table) {
-        //     $table->id('div_transaction_id');
-        //     $table->unsignedBigInteger('div_inventory_id')->nullable();
-        //     $table->enum('transaction_type', ['delivered', 'lost', 'sent']);
-        //     $table->unsignedBigInteger('sent_to')->nullable();
-        //     $table->integer('quantity');
-        //     $table->unsignedBigInteger('approved_by')->nullable();
-        //     $table->string('reference_number')->unique()->nullable();
-        //     $table->date('date')->nullable();
-        //     $table->time('time')->nullable();
-        //     $table->timestamps();
+        Schema::create('return_transactions', function (Blueprint $table) {
+            $table->id('return_id');
+            $table->unsignedBigInteger('borrow_id');
+            $table->integer('quantity');
+            $table->timestamp('return_date')->nullable();
+            $table->unsignedBigInteger('recorded_by')->nullable();
+            $table->timestamps();
 
-        //     $table->foreign('div_inventory_id')->references('div_inventory_id')->on('division_inventory')->onDelete('set null');
-        //     $table->foreign('approved_by')->references('id')->on('users')->onDelete('set null');
-        //     $table->foreign('sent_to')->references('school_id')->on('schools')->onDelete('set null');
-        // });
+            $table->foreign('borrow_id')->references('borrow_id')->on('borrow_transactions')->onDelete('cascade');
+            $table->foreign('recorded_by')->references('id')->on('users')->onDelete('set null');
+        });
 
         Schema::create('password_reset_tokens', function (Blueprint $table) {
             $table->string('email')->primary();
@@ -127,13 +132,18 @@ return new class extends Migration
         });
     }
 
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
         Schema::dropIfExists('users');
         Schema::dropIfExists('password_reset_tokens');
         Schema::dropIfExists('sessions');
+        Schema::dropIfExists('return_transactions');
+        Schema::dropIfExists('borrow_transactions');
+        Schema::dropIfExists('transactions');
+        Schema::dropIfExists('inventory');
+        Schema::dropIfExists('book_requests');
+        Schema::dropIfExists('schools');
+        Schema::dropIfExists('books');
+        Schema::dropIfExists('reference_codes');
     }
 };

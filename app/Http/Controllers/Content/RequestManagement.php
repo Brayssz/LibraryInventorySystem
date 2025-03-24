@@ -30,6 +30,7 @@ class RequestManagement extends Controller
 
             $orderColumnIndex = $request->input('order')[0]['column'] ?? 0;
             $orderColumn = $request->input('columns')[$orderColumnIndex]['data'] ?? 'request_id';
+            $query->orderByRaw("FIELD(status, 'pending') DESC");
             $orderDirection = $request->input('order')[0]['dir'] ?? 'asc';
             $query->orderBy($orderColumn, $orderDirection);
 

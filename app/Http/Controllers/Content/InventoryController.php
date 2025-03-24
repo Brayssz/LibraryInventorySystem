@@ -7,6 +7,7 @@ use App\Models\Book;
 use Illuminate\Http\Request;
 use App\Models\Inventory;
 use App\Models\School;
+use App\Models\BorrowTransaction;
 
 class InventoryController extends Controller
 {
@@ -23,7 +24,7 @@ class InventoryController extends Controller
                         ->orWhere('isbn', 'like', '%' . $search . '%');
                 });
             }
-            
+
 
             if ($request->filled('school_id')) {
                 $schoolId = $request->input('school_id');
@@ -50,9 +51,12 @@ class InventoryController extends Controller
                 return $books->filter(function ($book) use ($request) {
                     return !$request->filled('book_id') || $book->book_id == $request->input('book_id');
                 })->map(function ($book) use ($school) {
-                    $inventory = $school->inventory->firstWhere('book_id', $book->book_id);
-                    $received = $inventory ? $inventory->transactions()->where('transaction_type', 'received')->sum('quantity') : 0;
-                    $lost = $inventory ? $inventory->transactions()->where('transaction_type', 'lost')->sum('quantity') : 0;
+                    $inventory = $school->inventory->firstWhere('book_id', $book->book_id)->where('location_type', 'school');
+                    $received = $inventory ? $inventory->transactions()->where('transaction_type', 'receive')->sum('quantity') : 0;
+                    $lost = $inventory ? BorrowTransaction::whereHas('transaction', function ($query) use ($inventory) {
+                        $query->where('inventory_id', $inventory->inventory_id);
+                    })->sum('quantity_lost')
+                        : 0;
                     return [
                         'inventory_id' => $inventory->inventory_id ?? null,
                         'book_id' => $book->book_id,
@@ -70,7 +74,6 @@ class InventoryController extends Controller
                 });
             });
 
-            
 
             return response()->json([
                 "draw" => intval($request->input('draw', 1)),
@@ -83,13 +86,20 @@ class InventoryController extends Controller
         $schools = School::where('status', 'active')->with(['inventory.book'])->get();
         $books = Book::all();
 
-        $data = $schools->flatMap(function ($school) use ($books) {
-            return $books->map(function ($book) use ($school) {
-                $inventory = $school->inventory->firstWhere('book_id', $book->book_id);
-                $received = $inventory ? $inventory->transactions()->where('transaction_type', 'received')->sum('quantity') : 0;
-                $lost = $inventory ? $inventory->transactions()->where('transaction_type', 'lost')->sum('quantity') : 0;
+        $data = $schools->flatMap(function ($school) use ($books, $request) {
+            return $books->filter(function ($book) use ($request) {
+                return !$request->filled('book_id') || $book->book_id == $request->input('book_id');
+            })->map(function ($book) use ($school) {
+                $inventory = $school->inventory->firstWhere('book_id', $book->book_id)->where('location_type', 'school');
+                $received = $inventory ? $inventory->transactions()->where('transaction_type', 'receive')->sum('quantity') : 0;
+                $lost = $inventory ? BorrowTransaction::whereHas('transaction', function ($query) use ($inventory) {
+                    $query->where('inventory_id', $inventory->inventory_id);
+                })->sum('quantity_lost')
+                    : 0;
                 return [
                     'inventory_id' => $inventory->inventory_id ?? null,
+                    'book_id' => $book->book_id,
+                    'school_id' => $school->school_id,
                     'school' => $school->name,
                     'books' => [
                         [
@@ -141,16 +151,18 @@ class InventoryController extends Controller
             $inventories = Inventory::where('book_id', $book->book_id)->get();
             $totalAvailable = $inventories->sum('quantity');
             $totalReceived = $inventories->sum(function ($inventory) {
-                return $inventory->transactions()->where('transaction_type', 'received')->sum('quantity');
+                return $inventory->transactions()->where('transaction_type', 'receive')->sum('quantity');
             });
             $totalLost = $inventories->sum(function ($inventory) {
-                return $inventory->transactions()->where('transaction_type', 'lost')->sum('quantity');
+                return BorrowTransaction::whereHas('transaction', function ($query) use ($inventory) {
+                    $query->where('inventory_id', $inventory->inventory_id);
+                })->sum('quantity_lost');
             });
 
             return [
                 'book_id' => $book->book_id,
                 'title' => $book->title,
-                'total_quantity' => $totalReceived + $totalLost,
+                'total_quantity' => $totalAvailable + $totalLost,
                 'total_received' => $totalReceived,
                 'total_lost' => $totalLost,
                 'total_available' => $totalAvailable
@@ -164,5 +176,4 @@ class InventoryController extends Controller
             "data" => $data
         ]);
     }
-
 }

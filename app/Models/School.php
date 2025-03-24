@@ -11,10 +11,19 @@ class School extends Model
 
     protected $table = 'schools';
     protected $primaryKey = 'school_id';
-    protected $fillable = ['name', 'address', 'phone_number', 'email', 'status', 'password'];
+    protected $fillable = ['name', 'address', 'phone_number', 'email', 'status'];
+
+    protected $hidden = [
+        'password',
+    ];
+
+    public function bookRequests()
+    {
+        return $this->hasMany(BookRequest::class);
+    }
 
     public function inventory()
     {
-        return $this->hasMany(Inventory::class, 'school_id', 'school_id');
+        return $this->hasMany(Inventory::class, 'location_id');
     }
 }

@@ -94,10 +94,6 @@
                     "bFilter": true,
                     "sDom": 'fBtlpi',
                     'pagingType': 'numbers',
-                    "ordering": true,
-                    "order": [
-                        [0, 'desc']
-                    ],
                     "language": {
                         search: ' ',
                         sLengthMenu: '_MENU_',
@@ -237,10 +233,10 @@
                             "render": function(data, type, row) {
                                 return `
                                 <div class="edit-delete-action">
-                                    <a class="me-2 p-2 approve-request" data-requestid="${row.request_id}">
+                                    <a class="me-2 p-2 approve-request" data-requestid="${row.request_id}" data-status="${row.status}">
                                         <i data-feather="check" class="feather-check"></i>
                                     </a>
-                                    <a class="me-2 p-2 reject-request" data-requestid="${row.request_id}">
+                                    <a class="me-2 p-2 reject-request" data-requestid="${row.request_id}" data-status="${row.status}">
                                         <i data-feather="x" class="feather-x"></i>
                                     </a>
                                 </div>
@@ -255,6 +251,7 @@
                         $('.dataTables_filter').appendTo('#tableSearch');
                         $('.dataTables_filter').appendTo('.search-input');
                         feather.replace();
+                        hideLoader();
 
                         $('.status_filter').on('change', function() {
                             table.draw();

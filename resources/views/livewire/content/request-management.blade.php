@@ -80,7 +80,12 @@
 
             function openApproveRequestModal() {
                 const requestId = $(this).data('requestid');
+                const status = $(this).data('status');
 
+                if(status !== "pending") {
+                    messageAlert('Invalid Action', 'Request already approved.');
+                    return;
+                }
                 @this.call('resetFields').then(() => {
                     @this.call('approveRequest');
                     @this.set('request_id', requestId);
@@ -90,6 +95,12 @@
 
             function RejectRequest() {
                 const requestId = $(this).data('requestid');
+                const status = $(this).data('status');
+                
+                if(status !== "pending") {
+                    messageAlert('Invalid Action', 'Request already approved.');
+                    return;
+                }
 
                 @this.call('resetFields').then(() => {
                     
