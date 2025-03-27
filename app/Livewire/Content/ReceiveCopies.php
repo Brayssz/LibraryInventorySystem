@@ -29,7 +29,7 @@ class ReceiveCopies extends Component
         $this->validate();
 
         if($this->inventory_id) {
-            $inventory = Inventory::find($this->inventory_id);
+            $inventory = Inventory::where('inventory_id', $this->inventory_id);
             $inventory->quantity += $this->quantity;
             $inventory->save();
 

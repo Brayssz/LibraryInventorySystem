@@ -50,6 +50,7 @@
                         <thead>
                             <tr>
                                 <th>Reference Code</th>
+                                <th>Book</th>
                                 <th>School Name</th>
                                 <th>Quantity Released</th>
                                 <th>Approved By</th>
@@ -139,6 +140,9 @@
                     "columns": [
                         {
                             "data": "reference_code"
+                        },
+                        {
+                            "data": "book_title"
                         },
                         {
                             "data": "school_name"

@@ -231,10 +231,6 @@
                                     <a href="/returned-books-report"><i data-feather="rotate-ccw"></i><span>Return Transaction</span></a>
                                 </li>
 
-                                <li>
-                                    <a href="stock-transfer.html"><i data-feather="truck"></i><span>Report
-                                            3</span></a>
-                                </li>
                             </ul>
                         </li>
 

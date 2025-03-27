@@ -33,7 +33,7 @@ class RequestManagement extends Component
     {
         $this->validate();
 
-        $bookRequest = BookRequest::find($this->request_id);
+        $bookRequest = BookRequest::where('request_id', $this->request_id)->first();
 
         if ($bookRequest) {
             if ($this->delivered_quantity > $bookRequest->quantity) {
@@ -57,11 +57,12 @@ class RequestManagement extends Component
     }
 
     public function updateInventory() {
-        $bookRequest = BookRequest::find($this->request_id);
+        $bookRequest = BookRequest::where('request_id', $this->request_id)->first();
         if($bookRequest){
            
             $inventory = Inventory::where('book_id', $bookRequest->book_id)
-                ->where('location_id', $bookRequest->school_id)->where('location_type', 'school')
+                ->where('location_id', $bookRequest->school_id)
+                ->where('location_type', 'school')
                 ->first();
 
             if($inventory){
@@ -83,8 +84,10 @@ class RequestManagement extends Component
 
     public function updateDivisionInventory() 
     {
-        $bookRequest = BookRequest::find($this->request_id);
-        $inventory = Inventory::find($bookRequest->book_id)->where('location_type', 'division')->first();
+        $bookRequest = BookRequest::where('request_id', $this->request_id)->first();
+        $inventory = Inventory::where('book_id', $bookRequest->book_id)
+            ->where('location_type', 'division')
+            ->first();
 
         if($inventory) {
             if ($this->delivered_quantity > $inventory->quantity) {
@@ -98,7 +101,7 @@ class RequestManagement extends Component
 
     public function createBorrowTransaction($transaction_id) 
     {
-        $bookRequest = BookRequest::find($this->request_id);
+        $bookRequest = BookRequest::where('request_id', $this->request_id)->first();
         
         BorrowTransaction::create([
             'book_id' => $bookRequest->book_id,
@@ -114,7 +117,7 @@ class RequestManagement extends Component
 
     public function createInventoryTransaction($inventory_id)
     {
-        $bookRequest = BookRequest::find($this->request_id);
+        $bookRequest = BookRequest::where('request_id', $this->request_id)->first();
         
         $transaction = Transaction::create([
             'inventory_id' => $inventory_id,

@@ -11,7 +11,7 @@ class Book extends Model
 
     protected $table = 'books';
     protected $primaryKey = 'book_id';
-    protected $fillable = ['title', 'author', 'isbn', 'published_year', 'status'];
+    protected $fillable = ['title', 'author', 'isbn', 'published_date', 'status'];
 
     public function bookRequests()
     {

@@ -228,7 +228,7 @@
                                 if (row.status === "returned") {
                                     return `<span class="badge badge-linesuccess">Returned</span>`;
                                 } else if (row.status === "borrowed") {
-                                    return `<span class="badge badge-linewarning">Lost</span>`;
+                                    return `<span class="badge badge-linewarning">Pending</span>`;
                                 } else {
                                     return `<span class="badge badge-linewarning">Partially Returned</span>`;
                                 }

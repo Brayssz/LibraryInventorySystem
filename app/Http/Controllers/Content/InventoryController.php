@@ -15,113 +15,76 @@ class InventoryController extends Controller
     {
         if ($request->ajax()) {
             $query = School::where('status', 'active')->with(['inventory.book', 'inventory']);
-
+        
             if ($request->filled('search') && !empty($request->input('search')['value'])) {
                 $search = $request->input('search')['value'];
                 $query->whereHas('inventory.book', function ($q) use ($search) {
-                    $q->where('title', 'like', '%' . $search . '%')
-                        ->orWhere('author', 'like', '%' . $search . '%')
-                        ->orWhere('isbn', 'like', '%' . $search . '%');
+                    $q->where('title', 'like', "%$search%")
+                        ->orWhere('author', 'like', "%$search%")
+                        ->orWhere('isbn', 'like', "%$search%");
                 });
             }
-
-
+        
             if ($request->filled('school_id')) {
-                $schoolId = $request->input('school_id');
-                $query->where('school_id', $schoolId);
+                $query->where('school_id', $request->input('school_id'));
             }
-
-            $totalRecords = $query->count();
-
-            $orderColumnIndex = $request->input('order')[0]['column'] ?? 0;
-            $orderColumn = $request->input('columns')[$orderColumnIndex]['data'] ?? 'name';
-            if ($orderColumn === 'school') {
-                $orderColumn = 'name';
-            }
-            $orderDirection = $request->input('order')[0]['dir'] ?? 'asc';
-            $query->orderBy($orderColumn, $orderDirection);
-
-            $start = $request->input('start', 0);
-            $length = $request->input('length', 10);
-            $schools = $query->skip($start)->take($length)->get();
-
+        
+            $schools = $query->get();
             $books = Book::where('status', 'available')->get();
-
-            $data = $schools->flatMap(function ($school) use ($books, $request) {
-                return $books->filter(function ($book) use ($request) {
-                    return !$request->filled('book_id') || $book->book_id == $request->input('book_id');
-                })->map(function ($book) use ($school) {
-                    $inventory = $school->inventory->firstWhere(function ($inv) use ($book) {
-                        return $inv->book_id == $book->book_id && $inv->location_type == 'school';
-                    });
-                    $received = $inventory ? $inventory->transactions()->where('transaction_type', 'receive')->sum('quantity') : 0;
-                    $lost = $inventory ? BorrowTransaction::whereHas('transaction', function ($query) use ($inventory) {
-                        $query->where('inventory_id', $inventory->inventory_id);
-                    })->sum('quantity_lost')
-                        : 0;
-                    return [
-                        'inventory_id' => $inventory->inventory_id ?? null,
-                        'book_id' => $book->book_id,
-                        'school_id' => $school->school_id,
-                        'school' => $school->name,
-                        'books' => [
-                            [
+        
+            $data = collect();
+        
+            foreach ($schools as $school) {
+                foreach ($books as $book) {
+                    if (!$request->filled('book_id') || $book->book_id == $request->input('book_id')) {
+                        $inventory = $school->inventory->firstWhere(fn($inv) => $inv->book_id == $book->book_id && $inv->location_type == 'school');
+                        
+                        $received = $inventory ? $inventory->transactions()->where('transaction_type', 'receive')->sum('quantity') : 0;
+                        $lost = $inventory ? BorrowTransaction::whereHas('transaction', fn($query) => $query->where('inventory_id', $inventory->inventory_id))->sum('quantity_lost') : 0;
+                        
+                        $data->push([
+                            'inventory_id' => $inventory->inventory_id ?? null,
+                            'book_id' => $book->book_id,
+                            'school_id' => $school->school_id,
+                            'school' => $school->name,
+                            'books' => [[
                                 'title' => $book->title,
                                 'quantity' => $inventory->quantity ?? 0,
                                 'received' => $received,
                                 'lost' => $lost
-                            ]
-                        ]
-                    ];
-                });
-            });
-
-
+                            ]]
+                        ]);
+                    }
+                }
+            }
+        
+            $totalRecords = $data->count();
+            
+            $orderColumnIndex = $request->input('order')[0]['column'] ?? 0;
+            $orderColumn = $request->input('columns')[$orderColumnIndex]['data'] ?? 'school';
+            $orderDirection = $request->input('order')[0]['dir'] ?? 'asc';
+            
+            $data = $data->sortBy($orderColumn, SORT_REGULAR, $orderDirection === 'desc')->values();
+        
+            $start = (int) $request->input('start', 0);
+            $length = (int) $request->input('length', 10);
+            $data = $data->slice($start, $length)->values();
+        
             return response()->json([
                 "draw" => intval($request->input('draw', 1)),
                 "recordsTotal" => $totalRecords,
                 "recordsFiltered" => $totalRecords,
                 "data" => $data
-            ]);
+            ]); 
         }
 
-        $schools = School::where('status', 'active')->with(['inventory.book'])->get();
-        $books = Book::all();
-
-        $data = $schools->flatMap(function ($school) use ($books, $request) {
-            return $books->filter(function ($book) use ($request) {
-                return !$request->filled('book_id') || $book->book_id == $request->input('book_id');
-            })->map(function ($book) use ($school) {
-                $inventory = $school->inventory->firstWhere(function ($inv) use ($book) {
-                    return $inv->book_id == $book->book_id && $inv->location_type == 'school';
-                });
-                $received = $inventory ? $inventory->transactions()->where('transaction_type', 'receive')->sum('quantity') : 0;
-                $lost = $inventory ? BorrowTransaction::whereHas('transaction', function ($query) use ($inventory) {
-                    $query->where('inventory_id', $inventory->inventory_id);
-                })->sum('quantity_lost')
-                    : 0;
-                return [
-                    'inventory_id' => $inventory->inventory_id ?? null,
-                    'book_id' => $book->book_id,
-                    'school_id' => $school->school_id,
-                    'school' => $school->name,
-                    'books' => [
-                        [
-                            'title' => $book->title,
-                            'quantity' => $inventory->quantity ?? 0,
-                            'received' => $received,
-                            'lost' => $lost
-                        ]
-                    ]
-                ];
-            });
-        });
+     
 
         $l_books = Book::where('status', 'available')->get();
         $l_schools = School::where('status', 'active')->get();
 
-        return view('contents.inventory', compact('data', 'l_books', 'l_schools'));
-        // return response()->json($data);
+        return view('contents.inventory', compact( 'l_books', 'l_schools'));
+        
     }
 
     public function showDivisionTotal(Request $request)

@@ -50,6 +50,7 @@
                         <thead>
                             <tr>
                                 <th>Reference Code</th>
+                                <th>Book</th>
                                 <th>Quantity</th>
                                 <th>Approved By</th>
                                 <th>Date</th>
@@ -138,6 +139,9 @@
                     "columns": [
                         {
                             "data": "reference_code"
+                        },
+                        {
+                            "data": "book_title"
                         },
                         {
                             "data": "quantity"

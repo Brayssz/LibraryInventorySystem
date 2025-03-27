@@ -19,14 +19,14 @@ class ReturnBooks extends Component
     public $quantity = 0;
 
     protected $rules = [
-        'date' => 'required|date',
+        'date' => 'required|date|before_or_equal:today',
         'time' => 'required|date_format:H:i',
         'quantity' => 'required|integer|min:1',
     ];
 
     public function returnBooks()
     {
-        $borrowTransaction = BorrowTransaction::find($this->borrow_id)->with('returnTransactions', 'transaction')->first();
+        $borrowTransaction = BorrowTransaction::where('borrow_id', $this->borrow_id)->with('returnTransactions', 'transaction')->first();
         
         $totalReturned = $borrowTransaction->returnTransactions? $borrowTransaction->returnTransactions->sum('quantity') : 0;
         $totalBorrowed = $borrowTransaction->transaction->quantity;
@@ -63,7 +63,7 @@ class ReturnBooks extends Component
 
         $this->validate();
 
-        $borrowTransaction = BorrowTransaction::find($this->borrow_id)->with('returnTransactions', 'transaction')->first();
+        $borrowTransaction = BorrowTransaction::where('borrow_id', $this->borrow_id)->with('returnTransactions', 'transaction')->first();
         
         $totalReturned = $borrowTransaction->returnTransactions? $borrowTransaction->returnTransactions->sum('quantity') : 0;
         $totalBorrowed = $borrowTransaction->transaction->quantity;

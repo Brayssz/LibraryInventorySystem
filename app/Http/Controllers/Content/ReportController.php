@@ -14,6 +14,7 @@ use App\Models\BorrowTransaction;
 use App\Models\Transaction;
 use Carbon\Carbon;
 use App\Models\BookRequest;
+use App\Models\ReturnTransaction;
 
 class ReportController extends Controller
 {
@@ -136,7 +137,7 @@ class ReportController extends Controller
     public function showDeliveryTransactions(Request $request)
     {
         if ($request->ajax()) {
-            $query = Transaction::query()->where('transaction_type', 'delivery')->with('referenceCode', 'approvedBy');
+            $query = Transaction::where('transaction_type', 'delivery')->with('referenceCode', 'approvedBy', 'inventory.book');
 
             if ($request->filled('date_range')) {
                 $dates = explode(' - ', $request->date_range);
@@ -146,21 +147,30 @@ class ReportController extends Controller
             }
 
             $transactions = $query->get();
-
-            $report = [];
-            $totalRecords = 0;
+            $report = collect();
 
             foreach ($transactions as $transaction) {
-                $report[] = [
-                    'reference_code' => $transaction->referenceCode->reference_code,
+                $report->push([
+                    'reference_code' => $transaction->referenceCode->reference_code ?? null,
+                    'book_title' => $transaction->inventory->book->title ?? null,
                     'quantity' => $transaction->quantity,
-                    'approved_by' => $transaction->approvedBy->name,
+                    'approved_by' => $transaction->approvedBy->name ?? 'N/A',
                     'date' => Carbon::parse($transaction->transaction_timestamp)->format('F j, Y'),
                     'time' => Carbon::parse($transaction->transaction_timestamp)->format('h:i:s A'),
-                ];
-
-                $totalRecords++;
+                ]);
             }
+
+            $totalRecords = $report->count();
+
+            $orderColumnIndex = $request->input('order')[0]['column'] ?? 0;
+            $orderColumn = $request->input('columns')[$orderColumnIndex]['data'] ?? 'date';
+            $orderDirection = $request->input('order')[0]['dir'] ?? 'asc';
+
+            $report = $report->sortBy($orderColumn, SORT_REGULAR, $orderDirection === 'desc')->values();
+
+            $start = (int) $request->input('start', 0);
+            $length = (int) $request->input('length', 10);
+            $report = $report->slice($start, $length)->values();
 
             return response()->json([
                 "draw" => intval($request->input('draw', 1)),
@@ -176,8 +186,7 @@ class ReportController extends Controller
     public function showBooksDistribution(Request $request)
     {
         if ($request->ajax()) {
-
-            $query = BookRequest::query()->with('referenceCode', 'school', 'approvedBy')->where('status', 'approved');
+            $query = BookRequest::query()->with('referenceCode', 'school', 'approvedBy', 'book')->where('status', 'approved');
 
             if ($request->filled('date_range')) {
                 $dates = explode(' - ', $request->date_range);
@@ -187,22 +196,31 @@ class ReportController extends Controller
             }
 
             $bookRequests = $query->get();
-
-            $report = [];
-            $totalRecords = 0;
+            $report = collect();
 
             foreach ($bookRequests as $bookRequest) {
-                $report[] = [
-                    'reference_code' => $bookRequest->referenceCode->reference_code,
-                    'school_name' => $bookRequest->school->name,
-                    'quantity_released' => $bookRequest->quantity_released,
-                    'approved_by' => $bookRequest->approvedBy->name,
+                $report->push([
+                    'reference_code' => $bookRequest->referenceCode->reference_code ?? null,
+                    'book_title' => $bookRequest->book->title ?? null,
+                    'school_name' => $bookRequest->school->name ?? null,
+                    'quantity_released' => $bookRequest->quantity_released ?? 0,
+                    'approved_by' => $bookRequest->approvedBy->name ?? 'N/A',
                     'date' => Carbon::parse($bookRequest->updated_at)->format('F j, Y'),
                     'time' => Carbon::parse($bookRequest->updated_at)->format('h:i:s A'),
-                ];
-
-                $totalRecords++;
+                ]);
             }
+
+            $totalRecords = $report->count();
+
+            $orderColumnIndex = $request->input('order')[0]['column'] ?? 0;
+            $orderColumn = $request->input('columns')[$orderColumnIndex]['data'] ?? 'date';
+            $orderDirection = $request->input('order')[0]['dir'] ?? 'asc';
+
+            $report = $report->sortBy($orderColumn, SORT_REGULAR, $orderDirection === 'desc')->values();
+
+            $start = (int) $request->input('start', 0);
+            $length = (int) $request->input('length', 10);
+            $report = $report->slice($start, $length)->values();
 
             return response()->json([
                 "draw" => intval($request->input('draw', 1)),
@@ -218,8 +236,7 @@ class ReportController extends Controller
     public function showBookRequests(Request $request)
     {
         if ($request->ajax()) {
-
-            $query = BookRequest::query()->with('referenceCode', 'school', 'approvedBy');
+            $query = BookRequest::query()->with('referenceCode', 'school', 'approvedBy', 'book');
 
             if ($request->filled('date_range')) {
                 $dates = explode(' - ', $request->date_range);
@@ -229,22 +246,31 @@ class ReportController extends Controller
             }
 
             $bookRequests = $query->get();
-
-            $report = [];
-            $totalRecords = 0;
+            $report = collect();
 
             foreach ($bookRequests as $bookRequest) {
-                $report[] = [
-                    'reference_code' => $bookRequest->referenceCode->reference_code,
-                    'school_name' => $bookRequest->school->name,
-                    'quantity' => $bookRequest->quantity,
+                $report->push([
+                    'reference_code' => $bookRequest->referenceCode->reference_code ?? null,
+                    'book_title' => $bookRequest->book->title ?? null,
+                    'school_name' => $bookRequest->school->name ?? null,
+                    'quantity' => $bookRequest->quantity ?? 0,
+                    'status' => $bookRequest->status ?? 'N/A',
                     'date' => Carbon::parse($bookRequest->created_at)->format('F j, Y'),
                     'time' => Carbon::parse($bookRequest->created_at)->format('h:i:s A'),
-                    'status' => $bookRequest->status,
-                ];
-
-                $totalRecords++;
+                ]);
             }
+
+            $totalRecords = $report->count();
+
+            $orderColumnIndex = $request->input('order')[0]['column'] ?? 0;
+            $orderColumn = $request->input('columns')[$orderColumnIndex]['data'] ?? 'date';
+            $orderDirection = $request->input('order')[0]['dir'] ?? 'asc';
+
+            $report = $report->sortBy($orderColumn, SORT_REGULAR, $orderDirection === 'desc')->values();
+
+            $start = (int) $request->input('start', 0);
+            $length = (int) $request->input('length', 10);
+            $report = $report->slice($start, $length)->values();
 
             return response()->json([
                 "draw" => intval($request->input('draw', 1)),
@@ -260,8 +286,7 @@ class ReportController extends Controller
     public function showBorrowingTransaction(Request $request)
     {
         if ($request->ajax()) {
-
-            $query = BorrowTransaction::query()->where('status', 'Returned')
+            $query = BorrowTransaction::query()->whereIn('status', ['returned', 'borrowed', 'partially_returned'])
                 ->with([
                     'transaction.referenceCode',
                     'transaction.inventory.book',
@@ -276,12 +301,10 @@ class ReportController extends Controller
             }
 
             $transactions = $query->get();
-
-            $report = [];
-            $totalRecords = 0;
+            $report = collect();
 
             foreach ($transactions as $borrow) {
-                $report[] = [
+                $report->push([
                     'reference_code' => $borrow->transaction->referenceCode->reference_code ?? null,
                     'school_name' => $borrow->transaction->referenceCode->bookRequests->first()->school->name ?? null,
                     'book_name' => $borrow->transaction->referenceCode->bookRequests->first()->book->title ?? null,
@@ -290,10 +313,20 @@ class ReportController extends Controller
                     'quantity_lost' => $borrow->quantity_lost,
                     'date' => Carbon::parse($borrow->borrow_timestamp)->format('F j, Y'),
                     'time' => Carbon::parse($borrow->borrow_timestamp)->format('h:i:s A'),
-                ];
-
-                $totalRecords++;
+                ]);
             }
+
+            $totalRecords = $report->count();
+
+            $orderColumnIndex = $request->input('order')[0]['column'] ?? 0;
+            $orderColumn = $request->input('columns')[$orderColumnIndex]['data'] ?? 'date';
+            $orderDirection = $request->input('order')[0]['dir'] ?? 'asc';
+
+            $report = $report->sortBy($orderColumn, SORT_REGULAR, $orderDirection === 'desc')->values();
+
+            $start = (int) $request->input('start', 0);
+            $length = (int) $request->input('length', 10);
+            $report = $report->slice($start, $length)->values();
 
             return response()->json([
                 "draw" => intval($request->input('draw', 1)),
@@ -309,40 +342,48 @@ class ReportController extends Controller
     public function showReturnedBooks(Request $request)
     {
         if ($request->ajax()) {
-
-            $query = BorrowTransaction::query()->where('status', 'Returned')
+            $query = ReturnTransaction::query()
                 ->with([
-                    'transaction.referenceCode',
-                    'transaction.inventory.book',
-                    'transaction.referenceCode.bookRequests.school',
-                    'returnTransactions'
+                    'borrowTransaction.transaction.referenceCode',
+                    'borrowTransaction.transaction.inventory.book',
+                    'borrowTransaction.transaction.referenceCode.bookRequests.school',
+                    'recordedBy'
                 ]);
 
             if ($request->filled('date_range')) {
                 $dates = explode(' - ', $request->date_range);
                 $startDate = Carbon::createFromFormat('m/d/Y', trim($dates[0]))->startOfDay();
                 $endDate = Carbon::createFromFormat('m/d/Y', trim($dates[1]))->endOfDay();
-                $query->whereBetween('updated_at', [$startDate, $endDate]);
+                $query->whereBetween('return_date', [$startDate, $endDate]);
             }
 
-            $borrows = $query->get();
+            $returnTransactions = $query->get();
+            $report = collect();
 
-            $report = [];
-            $totalRecords = 0;
-
-            foreach ($borrows as $borrow) {
-                $report[] = [
-                    'reference_code' => $borrow->transaction->referenceCode->reference_code ?? null,
-                    'school_name' => $borrow->transaction->referenceCode->bookRequests->first()->school->name ?? null,
-                    'book_name' => $borrow->transaction->referenceCode->bookRequests->first()->book->title ?? null,
-                    'quantity_returned' => $borrow->returnTransactions->sum('quantity'),
-                    'recorded_by' => $borrow->user->name ?? 'Unknown',
-                    'date' => Carbon::parse($borrow->updated_at)->format('F j, Y'),
-                    'time' => Carbon::parse($borrow->updated_at)->format('h:i:s A'),
-                ];
-
-                $totalRecords++;
+            foreach ($returnTransactions as $returnTransaction) {
+                $borrowTransaction = $returnTransaction->borrowTransaction;
+                $report->push([
+                    'reference_code' => $borrowTransaction->transaction->referenceCode->reference_code ?? null,
+                    'school_name' => $borrowTransaction->transaction->referenceCode->bookRequests->first()->school->name ?? null,
+                    'book_name' => $borrowTransaction->transaction->inventory->book->title ?? null,
+                    'quantity_returned' => $returnTransaction->quantity,
+                    'recorded_by' => $returnTransaction->recordedBy->name ?? 'Unknown',
+                    'date' => Carbon::parse($returnTransaction->return_date)->format('F j, Y'),
+                    'time' => Carbon::parse($returnTransaction->return_date)->format('h:i:s A'),
+                ]);
             }
+
+            $totalRecords = $report->count();
+
+            $orderColumnIndex = $request->input('order')[0]['column'] ?? 0;
+            $orderColumn = $request->input('columns')[$orderColumnIndex]['data'] ?? 'date';
+            $orderDirection = $request->input('order')[0]['dir'] ?? 'asc';
+
+            $report = $report->sortBy($orderColumn, SORT_REGULAR, $orderDirection === 'desc')->values();
+
+            $start = (int) $request->input('start', 0);
+            $length = (int) $request->input('length', 10);
+            $report = $report->slice($start, $length)->values();
 
             return response()->json([
                 "draw" => intval($request->input('draw', 1)),
