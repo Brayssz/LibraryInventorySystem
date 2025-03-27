@@ -31,6 +31,8 @@
     <!-- Toatr CSS -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" rel="stylesheet">
 
+    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
+
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11.17/dist/sweetalert2.min.css">
 
     @vite(['resources/assets/css/style.css', 'resources/assets/css/sidebar.css'])
@@ -199,7 +201,7 @@
                                     <a href="/inventory"><i data-feather="archive"></i><span>Inventory</span></a>
                                 </li>
                                 <li class="{{ Request::is('book-request') ? 'active' : '' }}">
-                                    <a href="/book-request"><i data-feather="book-open"></i><span>Book Request</span></a>
+                                    <a href="/book-request"><i data-feather="book-open"></i><span>Borrowing Approval</span></a>
                                 </li>
                                 <li class="{{ Request::is('borrowed-books') ? 'active' : '' }}">
                                     <a href="/borrowed-books"><i data-feather="corner-up-left"></i><span>Return Books</span></a>
@@ -209,12 +211,26 @@
                         <li class="submenu-open">
                             <h6 class="submenu-hdr">Reports</h6>
                             <ul>
-                                <li>
-                                    <a href="manage-stocks.html"><i data-feather="package"></i><span>Book Deliveries Report</span></a>
+                                <li class="{{ Request::is('delivery-transactions-report') ? 'active' : '' }}">
+                                    <a href="delivery-transactions-report"><i data-feather="truck"></i><span>Delivery Transaction</span></a>
                                 </li>
-                                <li>
-                                    <a href="stock-adjustment.html"><i data-feather="clipboard"></i><span>Book Request Report</span></a>
+
+                                <li class="{{ Request::is('book-requests-report') ? 'active' : '' }}">
+                                    <a href="book-requests-report"><i data-feather="book-open"></i><span>Borrow Requests</span></a>
                                 </li>
+
+                                <li class="{{ Request::is('books-distribution-report') ? 'active' : '' }}">
+                                    <a href="books-distribution-report"><i data-feather="book"></i><span>Book Distribution</span></a>
+                                </li>
+
+                                <li class="{{ Request::is('borrowing-transaction-report') ? 'active' : '' }}">
+                                    <a href="/borrowing-transaction-report"><i data-feather="file-text"></i><span>Borrowing Transaction</span></a>
+                                </li>
+
+                                <li class="{{ Request::is('returned-books-report') ? 'active' : '' }}">
+                                    <a href="/returned-books-report"><i data-feather="rotate-ccw"></i><span>Return Transaction</span></a>
+                                </li>
+
                                 <li>
                                     <a href="stock-transfer.html"><i data-feather="truck"></i><span>Report
                                             3</span></a>
@@ -285,6 +301,8 @@
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.17/dist/sweetalert2.all.min.js"></script>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/webcamjs/1.0.26/webcam.min.js"></script>
+
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
 
 
     @vite(['resources/assets/js/script.js', 'resources/assets/js/custom-select2.js', 'resources/assets/js/mask.js', 'resources/assets/js/theme-script.js'])

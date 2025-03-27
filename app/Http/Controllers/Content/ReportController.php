@@ -11,6 +11,9 @@ use App\Models\Book;
 use App\Models\Inventory;
 use App\Models\School;
 use App\Models\BorrowTransaction;
+use App\Models\Transaction;
+use Carbon\Carbon;
+use App\Models\BookRequest;
 
 class ReportController extends Controller
 {
@@ -40,7 +43,7 @@ class ReportController extends Controller
             $columnIndex++;
         }
 
-        $row = 13; 
+        $row = 13;
         foreach ($reportData as $report) {
             $sheet->setCellValue('A' . $row, $report['title']);
             $sheet->setCellValue('B' . $row, $report['date_of_inventory']);
@@ -128,5 +131,227 @@ class ReportController extends Controller
         });
 
         return response()->json($data);
+    }
+
+    public function showDeliveryTransactions(Request $request)
+    {
+        if ($request->ajax()) {
+            $query = Transaction::query()->where('transaction_type', 'delivery')->with('referenceCode', 'approvedBy');
+
+            if ($request->filled('date_range')) {
+                $dates = explode(' - ', $request->date_range);
+                $startDate = Carbon::createFromFormat('m/d/Y', trim($dates[0]))->startOfDay();
+                $endDate = Carbon::createFromFormat('m/d/Y', trim($dates[1]))->endOfDay();
+                $query->whereBetween('transaction_timestamp', [$startDate, $endDate]);
+            }
+
+            $transactions = $query->get();
+
+            $report = [];
+            $totalRecords = 0;
+
+            foreach ($transactions as $transaction) {
+                $report[] = [
+                    'reference_code' => $transaction->referenceCode->reference_code,
+                    'quantity' => $transaction->quantity,
+                    'approved_by' => $transaction->approvedBy->name,
+                    'date' => Carbon::parse($transaction->transaction_timestamp)->format('F j, Y'),
+                    'time' => Carbon::parse($transaction->transaction_timestamp)->format('h:i:s A'),
+                ];
+
+                $totalRecords++;
+            }
+
+            return response()->json([
+                "draw" => intval($request->input('draw', 1)),
+                "recordsTotal" => $totalRecords,
+                "recordsFiltered" => $totalRecords,
+                "data" => $report
+            ]);
+        }
+
+        return view('reports.delivery-transaction-report');
+    }
+
+    public function showBooksDistribution(Request $request)
+    {
+        if ($request->ajax()) {
+
+            $query = BookRequest::query()->with('referenceCode', 'school', 'approvedBy')->where('status', 'approved');
+
+            if ($request->filled('date_range')) {
+                $dates = explode(' - ', $request->date_range);
+                $startDate = Carbon::createFromFormat('m/d/Y', trim($dates[0]))->startOfDay();
+                $endDate = Carbon::createFromFormat('m/d/Y', trim($dates[1]))->endOfDay();
+                $query->whereBetween('updated_at', [$startDate, $endDate]);
+            }
+
+            $bookRequests = $query->get();
+
+            $report = [];
+            $totalRecords = 0;
+
+            foreach ($bookRequests as $bookRequest) {
+                $report[] = [
+                    'reference_code' => $bookRequest->referenceCode->reference_code,
+                    'school_name' => $bookRequest->school->name,
+                    'quantity_released' => $bookRequest->quantity_released,
+                    'approved_by' => $bookRequest->approvedBy->name,
+                    'date' => Carbon::parse($bookRequest->updated_at)->format('F j, Y'),
+                    'time' => Carbon::parse($bookRequest->updated_at)->format('h:i:s A'),
+                ];
+
+                $totalRecords++;
+            }
+
+            return response()->json([
+                "draw" => intval($request->input('draw', 1)),
+                "recordsTotal" => $totalRecords,
+                "recordsFiltered" => $totalRecords,
+                "data" => $report
+            ]);
+        }
+
+        return view('reports.books-distribution-report');
+    }
+
+    public function showBookRequests(Request $request)
+    {
+        if ($request->ajax()) {
+
+            $query = BookRequest::query()->with('referenceCode', 'school', 'approvedBy');
+
+            if ($request->filled('date_range')) {
+                $dates = explode(' - ', $request->date_range);
+                $startDate = Carbon::createFromFormat('m/d/Y', trim($dates[0]))->startOfDay();
+                $endDate = Carbon::createFromFormat('m/d/Y', trim($dates[1]))->endOfDay();
+                $query->whereBetween('created_at', [$startDate, $endDate]);
+            }
+
+            $bookRequests = $query->get();
+
+            $report = [];
+            $totalRecords = 0;
+
+            foreach ($bookRequests as $bookRequest) {
+                $report[] = [
+                    'reference_code' => $bookRequest->referenceCode->reference_code,
+                    'school_name' => $bookRequest->school->name,
+                    'quantity' => $bookRequest->quantity,
+                    'date' => Carbon::parse($bookRequest->created_at)->format('F j, Y'),
+                    'time' => Carbon::parse($bookRequest->created_at)->format('h:i:s A'),
+                    'status' => $bookRequest->status,
+                ];
+
+                $totalRecords++;
+            }
+
+            return response()->json([
+                "draw" => intval($request->input('draw', 1)),
+                "recordsTotal" => $totalRecords,
+                "recordsFiltered" => $totalRecords,
+                "data" => $report
+            ]);
+        }
+
+        return view('reports.book-requests-report');
+    }
+
+    public function showBorrowingTransaction(Request $request)
+    {
+        if ($request->ajax()) {
+
+            $query = BorrowTransaction::query()->where('status', 'Returned')
+                ->with([
+                    'transaction.referenceCode',
+                    'transaction.inventory.book',
+                    'transaction.referenceCode.bookRequests.school'
+                ]);
+
+            if ($request->filled('date_range')) {
+                $dates = explode(' - ', $request->date_range);
+                $startDate = Carbon::createFromFormat('m/d/Y', trim($dates[0]))->startOfDay();
+                $endDate = Carbon::createFromFormat('m/d/Y', trim($dates[1]))->endOfDay();
+                $query->whereBetween('borrow_timestamp', [$startDate, $endDate]);
+            }
+
+            $transactions = $query->get();
+
+            $report = [];
+            $totalRecords = 0;
+
+            foreach ($transactions as $borrow) {
+                $report[] = [
+                    'reference_code' => $borrow->transaction->referenceCode->reference_code ?? null,
+                    'school_name' => $borrow->transaction->referenceCode->bookRequests->first()->school->name ?? null,
+                    'book_name' => $borrow->transaction->referenceCode->bookRequests->first()->book->title ?? null,
+                    'quantity_borrowed' => $borrow->transaction->quantity,
+                    'quantity_returned' => $borrow->returnTransactions->sum('quantity'),
+                    'quantity_lost' => $borrow->quantity_lost,
+                    'date' => Carbon::parse($borrow->borrow_timestamp)->format('F j, Y'),
+                    'time' => Carbon::parse($borrow->borrow_timestamp)->format('h:i:s A'),
+                ];
+
+                $totalRecords++;
+            }
+
+            return response()->json([
+                "draw" => intval($request->input('draw', 1)),
+                "recordsTotal" => $totalRecords,
+                "recordsFiltered" => $totalRecords,
+                "data" => $report
+            ]);
+        }
+
+        return view('reports.borrowing-transaction-report');
+    }
+
+    public function showReturnedBooks(Request $request)
+    {
+        if ($request->ajax()) {
+
+            $query = BorrowTransaction::query()->where('status', 'Returned')
+                ->with([
+                    'transaction.referenceCode',
+                    'transaction.inventory.book',
+                    'transaction.referenceCode.bookRequests.school',
+                    'returnTransactions'
+                ]);
+
+            if ($request->filled('date_range')) {
+                $dates = explode(' - ', $request->date_range);
+                $startDate = Carbon::createFromFormat('m/d/Y', trim($dates[0]))->startOfDay();
+                $endDate = Carbon::createFromFormat('m/d/Y', trim($dates[1]))->endOfDay();
+                $query->whereBetween('updated_at', [$startDate, $endDate]);
+            }
+
+            $borrows = $query->get();
+
+            $report = [];
+            $totalRecords = 0;
+
+            foreach ($borrows as $borrow) {
+                $report[] = [
+                    'reference_code' => $borrow->transaction->referenceCode->reference_code ?? null,
+                    'school_name' => $borrow->transaction->referenceCode->bookRequests->first()->school->name ?? null,
+                    'book_name' => $borrow->transaction->referenceCode->bookRequests->first()->book->title ?? null,
+                    'quantity_returned' => $borrow->returnTransactions->sum('quantity'),
+                    'recorded_by' => $borrow->user->name ?? 'Unknown',
+                    'date' => Carbon::parse($borrow->updated_at)->format('F j, Y'),
+                    'time' => Carbon::parse($borrow->updated_at)->format('h:i:s A'),
+                ];
+
+                $totalRecords++;
+            }
+
+            return response()->json([
+                "draw" => intval($request->input('draw', 1)),
+                "recordsTotal" => $totalRecords,
+                "recordsFiltered" => $totalRecords,
+                "data" => $report
+            ]);
+        }
+
+        return view('reports.returned-books-report');
     }
 }

@@ -33,6 +33,7 @@
                     <table class="table book-table pb-3">
                         <thead>
                             <tr>
+                                <th>Reference Code</th>
                                 <th>School</th>
                                 <th>Book</th>
                                 <th>Remaining Quantity</th>
@@ -91,7 +92,11 @@
                         },
                         "dataSrc": "data"
                     },
-                    "columns": [{
+                    "columns": [
+                        {
+                            "data": "transaction.reference_code.reference_code"
+                        },
+                        {
                             "data": null,
                             "render": function(data, type, row) {
                                 const colors = {
@@ -246,7 +251,7 @@
                         }
                     ],
                     "createdRow": function(row, data, dataIndex) {
-                        $(row).find('td').eq(6).addClass('action-table-data');
+                        $(row).find('td').eq(7).addClass('action-table-data');
                     },
                     "initComplete": function(settings, json) {
                         $('.dataTables_filter').appendTo('#tableSearch');

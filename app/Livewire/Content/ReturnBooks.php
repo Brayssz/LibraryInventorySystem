@@ -34,6 +34,7 @@ class ReturnBooks extends Component
 
         $borrowTransaction->return_date = Carbon::parse($this->date . ' ' . $this->time);
         $borrowTransaction->quantity_lost = $remaining;
+        $borrowTransaction->user_id = Auth::user()->id;
         $borrowTransaction->status = 'returned';
         $borrowTransaction->save();
 

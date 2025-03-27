@@ -45,3 +45,13 @@ Route::get('/book-request', [BookRequestController::class, 'showRequests'])->nam
 Route::get('/available-books', [BookRequestController::class, 'getAvailableBooks'])->name('available-books');
 
 Route::get('/borrowed-books', [ReturnController::class, 'showBorrowTransactions'])->name('borrowed-books');
+
+Route::get('/delivery-transactions-report', [ReportController::class, 'showDeliveryTransactions'])->name('delivery-transactions-report');
+
+Route::get('/books-distribution-report', [ReportController::class, 'showBooksDistribution'])->name('books-distribution-report');
+
+Route::get('/book-requests-report', [ReportController::class, 'showBookRequests'])->name('book-requests-report');
+
+Route::get('/borrowing-transaction-report', [ReportController::class, 'showBorrowingTransaction'])->name('borrowing-transaction-report ');
+
+Route::get('/returned-books-report', [ReportController::class, 'showReturnedBooks'])->name('returned-books-report');

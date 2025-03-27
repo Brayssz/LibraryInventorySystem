@@ -12,8 +12,8 @@ class BookRequestController extends Controller
     public function showRequests(Request $request)
     {
         if ($request->ajax()) {
-            $query = BookRequest::with(['school', 'book']);
-
+            $query = BookRequest::with(['school', 'book', 'referenceCode']);
+ 
             if ($request->filled('status')) {
                 $query->where('status', $request->status);
             }
@@ -23,13 +23,16 @@ class BookRequestController extends Controller
                 $query->where(function ($q) use ($search) {
                     $q->where('school_id', 'like', '%' . $search . '%')
                         ->orWhere('book_id', 'like', '%' . $search . '%')
-                        ->orWhere('quantity', 'like', '%' . $search . '%');
+                        ->orWhere('quantity', 'like', '%' . $search . '%')
+                        ->orWhereHas('referenceCode', function ($q) use ($search) {
+                            $q->where('reference_code', 'like', '%' . $search . '%');
+                        });
                 });
             }
 
             $totalRecords = $query->count();
 
-            $orderColumnIndex = $request->input('order')[0]['column'] ?? 0;
+            $orderColumnIndex = $request->input('order')[1]['column'] ?? 1;
             $orderColumn = $request->input('columns')[$orderColumnIndex]['data'] ?? 'request_id';
             $query->orderByRaw("FIELD(status, 'pending') DESC");
             $orderDirection = $request->input('order')[0]['dir'] ?? 'asc';

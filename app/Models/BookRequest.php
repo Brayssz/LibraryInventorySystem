@@ -34,5 +34,4 @@ class BookRequest extends Model
     {
         return $this->belongsTo(ReferenceCode::class, 'reference_id');
     }
-
 }
