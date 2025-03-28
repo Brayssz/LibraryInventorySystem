@@ -395,4 +395,98 @@ class ReportController extends Controller
 
         return view('reports.returned-books-report');
     }
+
+    
+ 
+    public function showBookInventory(Request $request)
+    {
+        if ($request->ajax()) {
+            $startDate = null;
+            $endDate = null;
+
+            if ($request->filled('date_range')) {
+                $dates = explode(' - ', $request->date_range);
+                $startDate = Carbon::createFromFormat('m/d/Y', trim($dates[0]))->startOfDay();
+                $endDate = Carbon::createFromFormat('m/d/Y', trim($dates[1]))->endOfDay();
+            }
+
+            $inventories = Inventory::where('location_type', 'division')
+                ->with('book')
+                ->get();
+
+            $report = collect();
+
+            foreach ($inventories as $inventory) {
+                $bookId = $inventory->book_id;
+
+                $schoolInventoryIds = Inventory::where('book_id', $bookId)
+                    ->where('location_type', 'school')
+                    ->pluck('inventory_id');
+
+                $transactions = Transaction::whereIn('inventory_id', $schoolInventoryIds)
+                    ->where('transaction_type', 'receive')
+                    ->with('borrowTransaction.returnTransactions')
+                    ->get();
+
+                $quantityDelivered = Transaction::where('inventory_id', $inventory->inventory_id)
+                    ->where('transaction_type', 'delivery')
+                    ->when($startDate, function ($query) use ($startDate) {
+                        $query->where('transaction_timestamp', '>=', $startDate);
+                    })
+                    ->when($endDate, function ($query) use ($endDate) {
+                        $query->where('transaction_timestamp', '<=', $endDate);
+                    })
+                    ->sum('quantity');
+
+                $quantityReceivedInSchools = $transactions->filter(function ($transaction) use ($startDate, $endDate) {
+                    return (!$startDate || Carbon::parse($transaction->transaction_timestamp)->gte($startDate)) &&
+                           (!$endDate || Carbon::parse($transaction->transaction_timestamp)->lte($endDate));
+                })->sum('quantity');
+
+                $quantityOnDivision = $quantityDelivered - $quantityReceivedInSchools;
+
+                $quantityBorrowed = $quantityReceivedInSchools;
+                $quantityReturned = $transactions->sum(function ($transaction) use ($startDate, $endDate) {
+                    return $transaction->borrowTransaction->returnTransactions
+                        ->filter(function ($returnTransaction) use ($startDate, $endDate) {
+                            return (!$startDate || Carbon::parse($returnTransaction->return_date)->gte($startDate)) &&
+                                   (!$endDate || Carbon::parse($returnTransaction->return_date)->lte($endDate));
+                        })
+                        ->sum('quantity');
+                });
+
+                $quantityLost = $quantityBorrowed - $quantityReturned;
+
+                $report->push([
+                    'book_title' => $inventory->book->title,
+                    'quantity_delivered' => $quantityDelivered,
+                    'quantity_on_division' => $quantityOnDivision + $quantityReturned,
+                    'quantity_borrowed' => $quantityBorrowed,
+                    'quantity_returned' => $quantityReturned,
+                    'quantity_lost' => $quantityLost,
+                ]);
+            }
+
+            $totalRecords = $report->count();
+
+            $orderColumnIndex = $request->input('order')[0]['column'] ?? 0;
+            $orderColumn = $request->input('columns')[$orderColumnIndex]['data'] ?? 'book_title';
+            $orderDirection = $request->input('order')[0]['dir'] ?? 'asc';
+
+            $report = $report->sortBy($orderColumn, SORT_REGULAR, $orderDirection === 'desc')->values();
+
+            $start = (int) $request->input('start', 0);
+            $length = (int) $request->input('length', 10);
+            $report = $report->slice($start, $length)->values();
+
+            return response()->json([
+                "draw" => intval($request->input('draw', 1)),
+                "recordsTotal" => $totalRecords,
+                "recordsFiltered" => $totalRecords,
+                "data" => $report
+            ]);
+        }
+
+        return view('reports.book-inventory-report');
+    }
 }

@@ -55,3 +55,5 @@ Route::get('/book-requests-report', [ReportController::class, 'showBookRequests'
 Route::get('/borrowing-transaction-report', [ReportController::class, 'showBorrowingTransaction'])->name('borrowing-transaction-report ');
 
 Route::get('/returned-books-report', [ReportController::class, 'showReturnedBooks'])->name('returned-books-report');
+
+Route::get('/book-inventory-report', [ReportController::class, 'showBookInventory'])->name('book-inventory-report');

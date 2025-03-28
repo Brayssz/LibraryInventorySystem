@@ -231,6 +231,10 @@
                                     <a href="/returned-books-report"><i data-feather="rotate-ccw"></i><span>Return Transaction</span></a>
                                 </li>
 
+                                <li class="{{ Request::is('book-inventory-report') ? 'active' : '' }}">
+                                    <a href="/book-inventory-report"><i data-feather="archive"></i><span>Book Inventory</span></a>
+                                </li>
+
                             </ul>
                         </li>
 
