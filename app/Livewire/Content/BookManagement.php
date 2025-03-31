@@ -49,7 +49,7 @@ class BookManagement extends Component
     public function resetFields()
     {
         $this->reset([
-            'title', 'author', 'isbn', 'published_date', 'status'
+            'title', 'author', 'published_date', 'status'
         ]);
     }
 
