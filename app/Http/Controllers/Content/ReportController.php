@@ -203,6 +203,7 @@ class ReportController extends Controller
                     'reference_code' => $bookRequest->referenceCode->reference_code ?? null,
                     'book_title' => $bookRequest->book->title ?? null,
                     'school_name' => $bookRequest->school->name ?? null,
+                    'quantity' => $bookRequest->quantity,
                     'quantity_released' => $bookRequest->quantity_released ?? 0,
                     'approved_by' => $bookRequest->approvedBy->name ?? 'N/A',
                     'date' => Carbon::parse($bookRequest->updated_at)->format('F j, Y'),
@@ -395,8 +396,6 @@ class ReportController extends Controller
 
         return view('reports.returned-books-report');
     }
-
-    
  
     public function showBookInventory(Request $request)
     {
@@ -410,25 +409,14 @@ class ReportController extends Controller
                 $endDate = Carbon::createFromFormat('m/d/Y', trim($dates[1]))->endOfDay();
             }
 
-            $inventories = Inventory::where('location_type', 'division')
-                ->with('book')
-                ->get();
-
+            $books = Book::with('inventory')->get();
             $report = collect();
 
-            foreach ($inventories as $inventory) {
-                $bookId = $inventory->book_id;
+            foreach ($books as $book) {
+                $divisionInventory = $book->inventory->firstWhere('location_type', 'division');
+                $schoolInventories = $book->inventory->where('location_type', 'school');
 
-                $schoolInventoryIds = Inventory::where('book_id', $bookId)
-                    ->where('location_type', 'school')
-                    ->pluck('inventory_id');
-
-                $transactions = Transaction::whereIn('inventory_id', $schoolInventoryIds)
-                    ->where('transaction_type', 'receive')
-                    ->with('borrowTransaction.returnTransactions')
-                    ->get();
-
-                $quantityDelivered = Transaction::where('inventory_id', $inventory->inventory_id)
+                $quantityDelivered = $divisionInventory ? Transaction::where('inventory_id', $divisionInventory->inventory_id)
                     ->where('transaction_type', 'delivery')
                     ->when($startDate, function ($query) use ($startDate) {
                         $query->where('transaction_timestamp', '>=', $startDate);
@@ -436,7 +424,13 @@ class ReportController extends Controller
                     ->when($endDate, function ($query) use ($endDate) {
                         $query->where('transaction_timestamp', '<=', $endDate);
                     })
-                    ->sum('quantity');
+                    ->sum('quantity') : 0;
+
+                $schoolInventoryIds = $schoolInventories->pluck('inventory_id');
+                $transactions = Transaction::whereIn('inventory_id', $schoolInventoryIds)
+                    ->where('transaction_type', 'receive')
+                    ->with('borrowTransaction.returnTransactions')
+                    ->get();
 
                 $quantityReceivedInSchools = $transactions->filter(function ($transaction) use ($startDate, $endDate) {
                     return (!$startDate || Carbon::parse($transaction->transaction_timestamp)->gte($startDate)) &&
@@ -458,7 +452,7 @@ class ReportController extends Controller
                 $quantityLost = $quantityBorrowed - $quantityReturned;
 
                 $report->push([
-                    'book_title' => $inventory->book->title,
+                    'book_title' => $book->title,
                     'quantity_delivered' => $quantityDelivered,
                     'quantity_on_division' => $quantityOnDivision + $quantityReturned,
                     'quantity_borrowed' => $quantityBorrowed,

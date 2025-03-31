@@ -5,6 +5,8 @@ namespace App\Http\Controllers\Content;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\BorrowTransaction;
+use App\Models\Book;
+use App\Models\School;
 
 class ReturnController extends Controller
 {
@@ -14,7 +16,16 @@ class ReturnController extends Controller
             $query = BorrowTransaction::query()->with('book', 'user', 'transaction', 'transaction.referenceCode.bookRequests.school', 'returnTransactions', 'transaction.referenceCode');
 
             if ($request->filled('status')) {
-            $query->where('status', $request->status);
+                $query->where('status', $request->status);
+            }
+
+            if ($request->filled('book_id')) {
+                $query->where('book_id', $request->book_id);
+            }
+            if ($request->filled('school_id')) {
+                $query->whereHas('transaction.referenceCode.bookRequests', function ($q) use ($request) {
+                    $q->where('school_id', $request->school_id);
+                });
             }
 
             if ($request->filled('search') && !empty($request->input('search')['value'])) {
@@ -50,9 +61,9 @@ class ReturnController extends Controller
             ]);
         }
 
-        $query = BorrowTransaction::query();
-        $borrowTransactions = $query->get();
+        $books = Book::where('status', 'available')->get();
+        $schools = School::where('status', 'active')->get();
 
-        return view('contents.return-books', compact('borrowTransactions'));
+        return view('contents.return-books', compact('books', 'schools'));
     }
 }

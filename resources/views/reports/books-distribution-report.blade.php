@@ -52,6 +52,7 @@
                                 <th>Reference Code</th>
                                 <th>Book</th>
                                 <th>School Name</th>
+                                <th>Quantity Requested</th>
                                 <th>Quantity Released</th>
                                 <th>Approved By</th>
                                 <th>Date</th>
@@ -84,7 +85,7 @@
             @endif
 
             $('.btn-generate').on('click', function () {
-                window.open('/generate-book-distribution-report?date_range=' + $('.daterange_filter').val(), '_blank');
+                window.open('/generate-books-distribution-report?date_range=' + $('.daterange_filter').val(), '_blank');
             });
 
             var start = moment().subtract(29, 'days');
@@ -146,6 +147,9 @@
                         },
                         {
                             "data": "school_name"
+                        },
+                        {
+                            "data": "quantity"
                         },
                         {
                             "data": "quantity_released"

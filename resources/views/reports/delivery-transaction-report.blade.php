@@ -83,7 +83,7 @@
             @endif
 
             $('.btn-generate').on('click', function () {
-                window.open('/generate-delivery-transaction-report?date_range=' + $('.daterange_filter').val(), '_blank');
+                window.open('/generate-delivery-transactions-report?date_range=' + $('.daterange_filter').val(), '_blank');
             });
 
             var start = moment().subtract(29, 'days');

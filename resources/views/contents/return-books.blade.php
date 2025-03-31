@@ -25,6 +25,43 @@
                                     class="feather-search"></i></a>
                         </div>
 
+                        <div class="row mt-sm-3 mt-xs-3 mt-lg-0 w-sm-100 flex-grow-1">
+                          
+                            <div class="col-lg-4 col-sm-12">
+                                <div class="form-group">
+                                    <select class="select book_filter form-control">
+                                        <option value="">Book</option>
+                                        @foreach ($books as $book)
+                                            <option value="{{ $book->book_id }}">{{ $book->title }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="col-lg-4 col-sm-12">
+                                <div class="form-group">
+                                    <select class="select school_filter form-control">
+                                        <option value="">School</option>
+                                        @foreach ($schools as $school)
+                                            <option value="{{ $school->school_id }}">{{ $school->name }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="col-lg-3 col-sm-12">
+                                <div class="form-group ">
+                                    <select class="select status_filter form-control">
+                                        <option value="">Status</option>
+                                        <option value="borrowed">Borrowed</option>
+                                        <option value="partially_returned">Partially Returned</option>
+                                        <option value="returned">Returned</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                        </div>
+
 
                     </div>
                 </div>
@@ -89,6 +126,8 @@
                         },
                         "data": function(d) {
                             d.status = $('.status_filter').val();
+                            d.book_id = $('.book_filter').val();
+                            d.school_id = $('.school_filter').val();
                         },
                         "dataSrc": "data"
                     },
@@ -258,7 +297,7 @@
                         $('.dataTables_filter').appendTo('.search-input');
                         feather.replace();
 
-                        $('.status_filter').on('change', function() {
+                        $('.status_filter, .book_filter, .school_filter').on('change', function() {
                             table.draw();
                         });
                     },

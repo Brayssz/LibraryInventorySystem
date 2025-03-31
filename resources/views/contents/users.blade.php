@@ -38,7 +38,7 @@
                         </div>
 
                         <div class="row mt-sm-3 mt-xs-3 mt-lg-0 w-sm-100 flex-grow-1">
-                            <div class="col-lg-2 col-sm-12">
+                            <div class="col-lg-4 col-sm-12">
                                 <div class="form-group ">
                                     <select class="select status_filter form-control">
                                         <option value="">Status</option>

@@ -127,8 +127,8 @@ class InventoryController extends Controller
             return [
                 'book_id' => $book->book_id,
                 'title' => $book->title,
-                'total_quantity' => $totalAvailable + $totalLost,
-                'total_received' => $divisionInventories,
+                'total_quantity' => $divisionInventories,
+                'total_received' => $divisionInventories + $totalLost + $totalAvailable,
                 'total_lost' => $totalLost,
                 'total_available' => $totalAvailable
             ];

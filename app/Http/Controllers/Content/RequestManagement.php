@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Content;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\BookRequest;
+use App\Models\Book;
 
 class RequestManagement extends Controller
 {
@@ -49,6 +50,8 @@ class RequestManagement extends Controller
         $query = BookRequest::query();
         $requests = $query->get();
 
-        return view('content.request-management', compact('requests'));
+        $books = Book::where('status', 'available')->get();
+
+        return view('content.request-management', compact('requests', 'books'));
     }
 }

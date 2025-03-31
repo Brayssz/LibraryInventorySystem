@@ -84,7 +84,7 @@
             @endif
 
             $('.btn-generate').on('click', function () {
-                window.open('/generate-book-request-report?date_range=' + $('.daterange_filter').val(), '_blank');
+                window.open('/generate-book-requests-report?date_range=' + $('.daterange_filter').val(), '_blank');
             });
 
             var start = moment().subtract(29, 'days');

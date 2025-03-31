@@ -43,15 +43,7 @@
                                                     @enderror
                                                 </div>
                                             </div>
-                                            <div class="col-lg-6 col-md-6">
-                                                <div class="mb-3">
-                                                    <label class="form-label" for="isbn">ISBN</label>
-                                                    <input type="text" id="isbn" class="form-control not_pass" placeholder="Enter ISBN" wire:model.lazy="isbn">
-                                                    @error('isbn')
-                                                        <span class="text-danger">{{ $message }}</span>
-                                                    @enderror
-                                                </div>
-                                            </div>
+                                          
                                             <div class="col-lg-6 col-md-6">
                                                 <div class="mb-3">
                                                     <label class="form-label" for="published_date">Published Year</label>

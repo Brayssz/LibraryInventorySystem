@@ -35,7 +35,30 @@
                         </div>
 
                         <div class="row mt-sm-3 mt-xs-3 mt-lg-0 w-sm-100 flex-grow-1">
-                            <div class="col-lg-2 col-sm-12">
+                          
+                            <div class="col-lg-4 col-sm-12">
+                                <div class="form-group">
+                                    <select class="select book_filter form-control">
+                                        <option value="">Book</option>
+                                        @foreach ($books as $book)
+                                            <option value="{{ $book->book_id }}">{{ $book->title }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="col-lg-4 col-sm-12">
+                                <div class="form-group">
+                                    <select class="select school_filter form-control">
+                                        <option value="">School</option>
+                                        @foreach ($schools as $school)
+                                            <option value="{{ $school->school_id }}">{{ $school->name }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="col-lg-3 col-sm-12">
                                 <div class="form-group ">
                                     <select class="select status_filter form-control">
                                         <option value="">Status</option>
@@ -58,7 +81,8 @@
                                 <th>Reference Code</th>
                                 <th>School</th>
                                 <th>Book</th>
-                                <th>Quantity</th>
+                                <th>Request Quantity</th>
+                                <th>Released Quantity</th>
                                 <th>Status</th>
                                 <th class="no-sort">Action</th>
                             </tr>
@@ -109,6 +133,8 @@
                         },
                         "data": function(d) {
                             d.status = $('.status_filter').val();
+                            d.book_id = $('.book_filter').val();
+                            d.school_id = $('.school_filter').val();
                         },
                         "dataSrc": "data"
                     },
@@ -224,6 +250,9 @@
                             "data": "quantity"
                         },
                         {
+                            "data": "quantity_released"
+                        },
+                        {
                             "data": null,
                             "render": function(data, type, row) {
                                 return row.status === "approved" ?
@@ -250,7 +279,7 @@
                         }
                     ],
                     "createdRow": function(row, data, dataIndex) {
-                        $(row).find('td').eq(5).addClass('action-table-data');
+                        $(row).find('td').eq(6).addClass('action-table-data');
                     },
                     "initComplete": function(settings, json) {
                         $('.dataTables_filter').appendTo('#tableSearch');
@@ -258,7 +287,8 @@
                         feather.replace();
                         hideLoader();
 
-                        $('.status_filter').on('change', function() {
+                        $('.status_filter, .book_filter, .school_filter').on('change', function() {
+                            console.log('change');
                             table.draw();
                         });
                     },

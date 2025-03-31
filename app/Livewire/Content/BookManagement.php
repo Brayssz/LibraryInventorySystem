@@ -14,7 +14,7 @@ class BookManagement extends Component
 
     public $total_books;
 
-    public $book_id, $title, $author, $isbn, $published_date, $status;
+    public $book_id, $title, $author, $published_date, $status;
 
     public function getBook($bookId)
     {
@@ -24,7 +24,6 @@ class BookManagement extends Component
             $this->book_id = $this->book->book_id;
             $this->title = $this->book->title;
             $this->author = $this->book->author;
-            $this->isbn = $this->book->isbn;
             $this->published_date = date('Y', strtotime($this->book->published_date));
             $this->status = $this->book->status;
         } else {
@@ -37,12 +36,6 @@ class BookManagement extends Component
         return [
             'title' => 'required|string|max:255',
             'author' => 'required|string|max:255',
-            'isbn' => [
-                'required',
-                'string',
-                'max:20',
-                Rule::unique('books', 'isbn')->ignore($this->book_id, 'book_id'),
-            ],
             'published_date' => 'required|date_format:Y|before_or_equal:' . date('Y'),
             'status' => 'nullable|string|max:255',
         ];
@@ -68,7 +61,6 @@ class BookManagement extends Component
             $book = Book::create([
                 'title' => $this->title,
                 'author' => $this->author,
-                'isbn' => $this->isbn,
                 'published_date' => $this->published_date . '-01-01',
             ]);
 
@@ -77,7 +69,6 @@ class BookManagement extends Component
         } else if ($this->submit_func == "edit-book") {
             $this->book->title = $this->title;
             $this->book->author = $this->author;
-            $this->book->isbn = $this->isbn;
             $this->book->published_date = $this->published_date . '-01-01';
             $this->book->status = $this->status;
 

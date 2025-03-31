@@ -32,13 +32,13 @@
             <div class="card-body pb-0">
                 <div class="table-top table-top-two table-top-new d-flex ">
                     <div class="search-set mb-0 d-flex w-100 justify-content-start">
-                        
+
                         <div class="search-input text-left">
                             <a href="" class="btn btn-searchset"><i data-feather="search" class="feather-search"></i></a>
                         </div>
 
                         <div class="row mt-sm-3 mt-xs-3 mt-lg-0 w-sm-100 flex-grow-1">
-                            <div class="col-lg-2 col-sm-12">
+                            <div class="col-lg-4 col-sm-12">
                                 <div class="form-group ">
                                     <select class="select status_filter form-control">
                                         <option value="">Status</option>
@@ -47,7 +47,7 @@
                                     </select>
                                 </div>
                             </div>
-                           
+
                         </div>
 
                     </div>
@@ -59,7 +59,7 @@
                             <tr>
                                 <th>Title</th>
                                 <th>Author</th>
-                                <th>ISBN</th>
+                                <th>Published Year</th>
                                 <th>Status</th>
                                 <th class="no-sort">Action</th>
                             </tr>
@@ -89,7 +89,7 @@
                 });
             @endif
 
-            if ($('.book-table').length > 0) {
+                if ($('.book-table').length > 0) {
                 var table = $('.book-table').DataTable({
                     "processing": true,
                     "serverSide": true,
@@ -118,83 +118,86 @@
                         "dataSrc": "data"
                     },
                     "columns": [
-                    {
-                        "data": null,
-                        "render": function (data, type, row) {
+                        {
+                            "data": null,
+                            "render": function (data, type, row) {
 
-                            const colors = {
-                                A: 'bg-primary',
-                                B: 'bg-success',
-                                C: 'bg-info',
-                                D: 'bg-warning',
-                                E: 'bg-danger',
-                                F: 'bg-secondary',
-                                G: 'bg-dark',
-                                H: 'bg-light',
-                                I: 'bg-primary',
-                                J: 'bg-success',
-                                K: 'bg-info',
-                                L: 'bg-warning',
-                                M: 'bg-danger',
-                                N: 'bg-secondary',
-                                O: 'bg-dark',
-                                P: 'bg-light',
-                                Q: 'bg-primary',
-                                R: 'bg-success',
-                                S: 'bg-info',
-                                T: 'bg-warning',
-                                U: 'bg-danger',
-                                V: 'bg-secondary',
-                                W: 'bg-dark',
-                                X: 'bg-light',
-                                Y: 'bg-primary',
-                                Z: 'bg-success'
-                            };
+                                const colors = {
+                                    A: 'bg-primary',
+                                    B: 'bg-success',
+                                    C: 'bg-info',
+                                    D: 'bg-warning',
+                                    E: 'bg-danger',
+                                    F: 'bg-secondary',
+                                    G: 'bg-dark',
+                                    H: 'bg-light',
+                                    I: 'bg-primary',
+                                    J: 'bg-success',
+                                    K: 'bg-info',
+                                    L: 'bg-warning',
+                                    M: 'bg-danger',
+                                    N: 'bg-secondary',
+                                    O: 'bg-dark',
+                                    P: 'bg-light',
+                                    Q: 'bg-primary',
+                                    R: 'bg-success',
+                                    S: 'bg-info',
+                                    T: 'bg-warning',
+                                    U: 'bg-danger',
+                                    V: 'bg-secondary',
+                                    W: 'bg-dark',
+                                    X: 'bg-light',
+                                    Y: 'bg-primary',
+                                    Z: 'bg-success'
+                                };
 
-                            const firstLetter = row.title ? row.title.charAt(0).toUpperCase() : 'A';
-                            const bgColor = colors[firstLetter] || 'bg-secondary';
+                                const firstLetter = row.title ? row.title.charAt(0).toUpperCase() : 'A';
+                                const bgColor = colors[firstLetter] || 'bg-secondary';
 
-                            return `
-                                    <div class="userimgname">
-                                        <a href="javascript:void(0);" class="product-img">
-                                            <span class="avatar ${bgColor} avatar-rounded">
-                                                <span class="avatar-title">${firstLetter}</span>
-                                            </span>
-                                        </a>
-                                        <div>
-                                            <a href="javascript:void(0);">${row.title}</a>
+                                return `
+                                        <div class="userimgname">
+                                            <a href="javascript:void(0);" class="product-img">
+                                                <span class="avatar ${bgColor} avatar-rounded">
+                                                    <span class="avatar-title">${firstLetter}</span>
+                                                </span>
+                                            </a>
+                                            <div>
+                                                <a href="javascript:void(0);">${row.title}</a>
+                                            </div>
                                         </div>
+                                    `;
+
+                            }
+                        },
+                        {
+                            "data": "author"
+                        },
+                        {
+                            "data": "published_date",
+                            "render": function (data, type, row) {
+                                return new Date(data).getFullYear();
+                            }
+                        },
+                        {
+                            "data": null,
+                            "render": function (data, type, row) {
+                                return row.status === "available" ?
+                                    `<span class="badge badge-linesuccess">Available</span>` :
+                                    `<span class="badge badge-linedanger">Unavailable</span>`;
+                            }
+                        },
+                        {
+                            "data": null,
+                            "render": function (data, type, row) {
+                                return `
+                                    <div class="edit-delete-action">
+                                        <a class="me-2 p-2 edit-book" data-bookid="${row.book_id}">
+                                            <i data-feather="edit" class="feather-edit"></i>
+                                        </a>
                                     </div>
                                 `;
-
+                            }
                         }
-                    },
-                    {
-                        "data": "author"
-                    },
-                    {
-                        "data": "isbn"
-                    },
-                    {
-                        "data": null,
-                        "render": function (data, type, row) {
-                            return row.status === "available" ?
-                                `<span class="badge badge-linesuccess">Available</span>` :
-                                `<span class="badge badge-linedanger">Unavailable</span>`;
-                        }
-                    },
-                    {
-                        "data": null,
-                        "render": function (data, type, row) {
-                            return `
-                                <div class="edit-delete-action">
-                                    <a class="me-2 p-2 edit-book" data-bookid="${row.book_id}">
-                                        <i data-feather="edit" class="feather-edit"></i>
-                                    </a>
-                                </div>
-                            `;
-                        }
-                    }
                     ],
                     "createdRow": function (row, data, dataIndex) {
                         $(row).find('td').eq(4).addClass('action-table-data');

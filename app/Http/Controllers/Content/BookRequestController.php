@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\BookRequest;
 use App\Models\Book;
+use App\Models\School;
 
 class BookRequestController extends Controller
 {
@@ -16,6 +17,14 @@ class BookRequestController extends Controller
  
             if ($request->filled('status')) {
                 $query->where('status', $request->status);
+            }
+
+            if($request->filled('book_id')) {
+                $query->where('book_id', $request->book_id);
+            }
+
+            if($request->filled('school_id')) {
+                $query->where('school_id', $request->school_id);
             }
 
             if ($request->filled('search') && !empty($request->input('search')['value'])) {
@@ -50,10 +59,10 @@ class BookRequestController extends Controller
             ]);
         }
 
-        $query = BookRequest::query();
-        $requests = $query->get();
+        $books = Book::where('status', 'available')->get();
+        $schools = School::where('status', 'active')->get();
 
-        return view('contents.request-management', compact('requests'));
+        return view('contents.request-management', compact('books', 'schools'));
     }
 
     public function getAvailableBooks(Request $request)

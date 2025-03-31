@@ -24,7 +24,6 @@ return new class extends Migration
             $table->id('book_id');
             $table->string('title');
             $table->string('author');
-            $table->string('isbn')->unique();
             $table->date('published_date')->nullable();
             $table->string('status')->default('available');
             $table->timestamps();

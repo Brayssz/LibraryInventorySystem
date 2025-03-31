@@ -40,7 +40,7 @@
 
                         <div class="row mt-sm-3 mt-xs-3 mt-lg-0 w-sm-100 flex-grow-1">
 
-                            <div class="col-lg-2 col-sm-12">
+                            <div class="col-lg-4 col-sm-12">
                                 <div class="form-group">
                                     <select class="select book_div_filter form-control">
                                         <option value="">Book</option>
@@ -61,7 +61,7 @@
                         <thead>
                             <tr>
                                 <th>Book</th>
-                                <th>Number of Copies Delivered / Qty On Division</th>
+                                <th>Number of Copies Delivered</th>
                                 <th>Actual Number of SLR's</th>
                                 <th>Available</th>
                                 <th>Lost/Missing</th>
@@ -112,7 +112,7 @@
                                     </select>
                                 </div>
                             </div>
-                            <div class="col-lg-2 col-sm-12">
+                            <div class="col-lg-4 col-sm-12">
                                 <div class="form-group">
                                     <select class="select book_filter form-control">
                                         <option value="">Book</option>
