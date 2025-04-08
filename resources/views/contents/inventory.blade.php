@@ -135,7 +135,7 @@
                                 <th>School</th>
                                 <th>Book</th>
                                 <th>Number of copies received</th>
-                                <th>Available</th>
+                                <th>Borrowed</th>
                                 <th>Lost/Missing</th>
                             </tr>
                         </thead>
