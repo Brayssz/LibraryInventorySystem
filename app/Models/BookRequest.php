@@ -12,7 +12,7 @@ class BookRequest extends Model
     protected $primaryKey = 'request_id';
 
     protected $fillable = [
-        'school_id', 'book_id', 'quantity', 'quantity_released', 'status', 'approved_by', 'reference_id',
+        'school_id', 'book_id', 'quantity', 'quantity_released', 'status', 'approved_by', 'reference_id', 'remarks',
     ];
 
     public function school()

@@ -11,6 +11,7 @@ class BorrowBook extends Component
 {
     public $book_id;
     public $quantity = 0;
+    public $remarks;
 
     protected $rules = [
         'quantity' => 'required|integer|min:1',
@@ -44,6 +45,7 @@ class BorrowBook extends Component
         BookRequest::create([
             'school_id' => $school_id,
             'book_id' => $this->book_id,
+            'remarks' => $this->remarks,
             'quantity' => $this->quantity,
             'reference_id' => $reference->reference_id,
             'status' => 'pending',
@@ -60,6 +62,7 @@ class BorrowBook extends Component
     {
         $this->book_id = null;
         $this->quantity = null;
+        $this->remarks = null;
     }
 
     public function render()

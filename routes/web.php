@@ -72,4 +72,6 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/generate-returned-books-report', [PDFController::class, 'showReturnedBooks'])->name('generate-returned-books-report');
 
     Route::get('/generate-book-inventory-report', [PDFController::class, 'showBookInventory'])->name('generate-book-inventory-report');
+
+    Route::get('/monthly-transaction-data', [AppController::class, 'getMonthlyTransactionData'])->name('monthly-transaction-data');
 });
