@@ -22,6 +22,7 @@ return new class extends Migration
 
         Schema::create('books', function (Blueprint $table) {
             $table->id('book_id');
+            $table->string('book_photo_path')->nullable();
             $table->string('title');
             $table->string('author');
             $table->date('published_date')->nullable();

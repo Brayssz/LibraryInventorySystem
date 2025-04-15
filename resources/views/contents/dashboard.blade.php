@@ -89,6 +89,71 @@
             <div class="col-xl-5 col-sm-12 col-12 d-flex">
                 <div class="card flex-fill default-cover mb-4">
                     <div class="card-header d-flex justify-content-between align-items-center">
+                        <h4 class="card-title mb-0">Top Borrowed Books</h4>
+                        <div class="view-all-link">
+                            <a href="inventory" class="view-all d-flex align-items-center">
+                                View Inventory<span class="ps-2 d-flex align-items-center"><i data-feather="arrow-right"
+                                        class="feather-16"></i></span>
+                            </a>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive dataview">
+                            @if ($top_borrowed_books->isEmpty())
+                                <div class="text-center mt-4">
+                                    <i class="fa fa-calendar-times" style="font-size: 2rem; color: #dc3545;"></i>
+                                    <p class="mt-4">No borrowed books data available.</p>
+                                </div>
+                            @else
+                                <table class="table dashboard-recent-products">
+                                    <thead>
+                                        <tr>
+                                            <th>#</th>
+                                            <th>Book Title</th>
+                                            <th>Published Date</th>
+                                            <th>Borrowed</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach ($top_borrowed_books as $book)
+                                            <tr>
+                                                <td>{{ $loop->iteration }}</td>
+                                                <td>
+													@php
+														$bookPhotoPath = $book->book_photo_path ? asset('storage/' . $book->book_photo_path) : null;
+													@endphp
+										
+													@if ($bookPhotoPath)
+														<img src="{{ $bookPhotoPath }}" alt="book cover" loading="lazy" style="height: 2.65rem;" class="rounded-2">
+													@else
+														@php
+															$bookFirstLetter = strtoupper(substr($book->title, 0, 1));
+															$bgColor = $colors[$bookFirstLetter] ?? 'bg-secondary';
+														@endphp
+														<span class="avatar {{ $bgColor }} avatar-rounded" style="height: 2.65rem;">
+															<span class="avatar-title">{{ $bookFirstLetter }}</span>
+														</span>
+													@endif
+										
+													<a>{{ $book->title }}</a>
+												</td>
+												<td>{{ \Carbon\Carbon::parse($book->published_date)->format('Y') }}</td>
+                                                <td>{{ $book->total_borrowed }}</td>
+                                            </tr>
+                                        @endforeach
+                                    </tbody>
+                                </table>
+                            @endif
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-xl-12 col-sm-12 col-12 d-flex">
+				<div class="card flex-fill default-cover mb-4">
+                    <div class="card-header d-flex justify-content-between align-items-center">
                         <h4 class="card-title mb-0">Pending Request</h4>
                         <div class="view-all-link">
                             <a href="book-request" class="view-all d-flex align-items-center">
@@ -128,39 +193,48 @@
                                             ];
                                         @endphp
                                         @foreach ($pending_requests as $pending_request)
-                                            <tr>
-                                                <td>{{ $loop->iteration }}</td>
-                                                <td>
-                                                    <a href="javascript:void(0);" class="product-img">
-                                                        @php
-                                                            $firstLetter = strtoupper(
-                                                                substr($pending_request->school->name, 0, 1),
-                                                            );
-                                                            $bgColor = $colors[$firstLetter] ?? 'bg-secondary';
-                                                        @endphp
-                                                        <span class="avatar {{ $bgColor }} avatar-rounded" style="height: 2.65rem;">
-                                                            <span class="avatar-title">{{ $firstLetter }}</span>
-                                                        </span>
-                                                    </a>
-                                                    <a>{{ $pending_request->school->name }}</a>
-                                                </td>
-                                                <td>
-                                                    <a href="javascript:void(0);" class="product-img">
-                                                        @php
-                                                            $firstLetter = strtoupper(
-                                                                substr($pending_request->book->title, 0, 1),
-                                                            );
-                                                            $bgColor = $colors[$firstLetter] ?? 'bg-secondary';
-                                                        @endphp
-                                                        <span class="avatar {{ $bgColor }} avatar-rounded" style="height: 2.65rem;">
-                                                            <span class="avatar-title">{{ $firstLetter }}</span>
-                                                        </span>
-                                                    </a>
-                                                    <a>{{ $pending_request->book->title }}</a>
-                                                </td>
-                                                <td class="text-center font-weight-bold">{{ $pending_request->quantity }}</td>
-                                            </tr>
-                                        @endforeach
+											<tr>
+												<td>{{ $loop->iteration }}</td>
+										
+												<td>
+													@php
+														$schoolName = $pending_request->school->name;
+														$firstLetter = strtoupper(substr($schoolName, 0, 1));
+														$bgColor = $colors[$firstLetter] ?? 'bg-secondary';
+													@endphp
+										
+													<span class="avatar {{ $bgColor }} avatar-rounded" style="height: 2.65rem;">
+														<span class="avatar-title">{{ $firstLetter }}</span>
+													</span>
+													<a>{{ $schoolName }}</a>
+												</td>
+										
+												{{-- Book Info --}}
+												<td>
+													@php
+														$book = $pending_request->book;
+														$bookPhotoPath = $book->book_photo_path ? asset('storage/' . $book->book_photo_path) : null;
+													@endphp
+										
+													@if ($bookPhotoPath)
+														<img src="{{ $bookPhotoPath }}" alt="book cover" loading="lazy" style="height: 2.65rem;" class="rounded-2">
+													@else
+														@php
+															$bookFirstLetter = strtoupper(substr($book->title, 0, 1));
+															$bgColor = $colors[$bookFirstLetter] ?? 'bg-secondary';
+														@endphp
+														<span class="avatar {{ $bgColor }} avatar-rounded" style="height: 2.65rem;">
+															<span class="avatar-title">{{ $bookFirstLetter }}</span>
+														</span>
+													@endif
+										
+													<a>{{ $book->title }}</a>
+												</td>
+										
+												<td>{{ $pending_request->quantity }}</td>
+											</tr>
+										@endforeach
+										
                                     </tbody>
                                 </table>
                             @endif
@@ -169,68 +243,6 @@
                 </div>
             </div>
         </div>
-
-        <div class="row">
-           
-            <div class="col-xl-12 col-sm-12 col-12 d-flex">
-                <div class="card flex-fill default-cover mb-4">
-                    <div class="card-header d-flex justify-content-between align-items-center">
-                        <h4 class="card-title mb-0">Top Borrowed Books</h4>
-                        <div class="view-all-link">
-                            <a href="inventory" class="view-all d-flex align-items-center">
-                                View Inventory<span class="ps-2 d-flex align-items-center"><i data-feather="arrow-right"
-                                        class="feather-16"></i></span>
-                            </a>
-                        </div>
-                    </div>
-                    <div class="card-body">
-                        <div class="table-responsive dataview">
-                            @if ($top_borrowed_books->isEmpty())
-                                <div class="text-center mt-4">
-                                    <i class="fa fa-calendar-times" style="font-size: 2rem; color: #dc3545;"></i>
-                                    <p class="mt-4">No borrowed books data available.</p>
-                                </div>
-                            @else
-                                <table class="table dashboard-recent-products">
-                                    <thead>
-                                        <tr>
-                                            <th>#</th>
-                                            <th>Book Title</th>
-                                            <th>Published Date</th>
-                                            <th>Total Borrowed</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        @foreach ($top_borrowed_books as $book)
-                                            <tr>
-                                                <td>{{ $loop->iteration }}</td>
-                                                <td>
-                                                    <a href="javascript:void(0);" class="product-img">
-                                                        @php
-                                                            $firstLetter = strtoupper(
-                                                                substr($book->title, 0, 1),
-                                                            );
-                                                            $bgColor = $colors[$firstLetter] ?? 'bg-secondary';
-                                                        @endphp
-                                                        <span class="avatar {{ $bgColor }} avatar-rounded" style="height: 2.65rem;">
-                                                            <span class="avatar-title">{{ $firstLetter }}</span>
-                                                        </span>
-                                                    </a>
-                                                    <a>{{ $book->title }}</a>
-                                                </td>
-                                                <td>{{ \Carbon\Carbon::parse($book->published_date)->format('F j, Y') }}</td>
-                                                <td>{{ $book->total_borrowed }}</td>
-                                            </tr>
-                                        @endforeach
-                                    </tbody>
-                                </table>
-                            @endif
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
     </div>
 @endsection
 @push('scripts')

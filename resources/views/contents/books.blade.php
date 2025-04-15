@@ -121,40 +121,52 @@
                         {
                             "data": null,
                             "render": function (data, type, row) {
+                                if (row.book_photo_path) {
+                                    const avatarSrc = `/storage/${row.book_photo_path}`;
+                                    return `
+                                        <div class="userimgname">
+                                            <a href="javascript:void(0);" class="product-img">
+                                                <img src="${avatarSrc}" alt="book cover" loading="lazy">
+                                            </a>
+                                            <div>
+                                                <a href="javascript:void(0);">${row.title}</a>
+                                            </div>
+                                        </div>
+                                    `;
+                                } else {
+                                    const colors = {
+                                        A: 'bg-primary',
+                                        B: 'bg-success',
+                                        C: 'bg-info',
+                                        D: 'bg-warning',
+                                        E: 'bg-danger',
+                                        F: 'bg-secondary',
+                                        G: 'bg-dark',
+                                        H: 'bg-light',
+                                        I: 'bg-primary',
+                                        J: 'bg-success',
+                                        K: 'bg-info',
+                                        L: 'bg-warning',
+                                        M: 'bg-danger',
+                                        N: 'bg-secondary',
+                                        O: 'bg-dark',
+                                        P: 'bg-light',
+                                        Q: 'bg-primary',
+                                        R: 'bg-success',
+                                        S: 'bg-info',
+                                        T: 'bg-warning',
+                                        U: 'bg-danger',
+                                        V: 'bg-secondary',
+                                        W: 'bg-dark',
+                                        X: 'bg-light',
+                                        Y: 'bg-primary',
+                                        Z: 'bg-success'
+                                    };
 
-                                const colors = {
-                                    A: 'bg-primary',
-                                    B: 'bg-success',
-                                    C: 'bg-info',
-                                    D: 'bg-warning',
-                                    E: 'bg-danger',
-                                    F: 'bg-secondary',
-                                    G: 'bg-dark',
-                                    H: 'bg-light',
-                                    I: 'bg-primary',
-                                    J: 'bg-success',
-                                    K: 'bg-info',
-                                    L: 'bg-warning',
-                                    M: 'bg-danger',
-                                    N: 'bg-secondary',
-                                    O: 'bg-dark',
-                                    P: 'bg-light',
-                                    Q: 'bg-primary',
-                                    R: 'bg-success',
-                                    S: 'bg-info',
-                                    T: 'bg-warning',
-                                    U: 'bg-danger',
-                                    V: 'bg-secondary',
-                                    W: 'bg-dark',
-                                    X: 'bg-light',
-                                    Y: 'bg-primary',
-                                    Z: 'bg-success'
-                                };
+                                    const firstLetter = row.title ? row.title.charAt(0).toUpperCase() : 'A';
+                                    const bgColor = colors[firstLetter] || 'bg-secondary';
 
-                                const firstLetter = row.title ? row.title.charAt(0).toUpperCase() : 'A';
-                                const bgColor = colors[firstLetter] || 'bg-secondary';
-
-                                return `
+                                    return `
                                         <div class="userimgname">
                                             <a href="javascript:void(0);" class="product-img">
                                                 <span class="avatar ${bgColor} avatar-rounded">
@@ -166,7 +178,7 @@
                                             </div>
                                         </div>
                                     `;
-
+                                }
                             }
                         },
                         {

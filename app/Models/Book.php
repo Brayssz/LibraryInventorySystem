@@ -4,14 +4,15 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Livewire\Features\SupportFileUploads\WithFileUploads;
 
 class Book extends Model
 {
-    use HasFactory;
+    use HasFactory, WithFileUploads;
 
     protected $table = 'books';
     protected $primaryKey = 'book_id';
-    protected $fillable = ['title', 'author', 'published_date', 'status'];
+    protected $fillable = ['title', 'author', 'published_date', 'status', 'book_photo_path'];
 
     public function bookRequests()
     {

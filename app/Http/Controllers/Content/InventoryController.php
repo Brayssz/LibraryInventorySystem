@@ -45,6 +45,7 @@ class InventoryController extends Controller
                         $data->push([
                             'inventory_id' => $inventory->inventory_id ?? null,
                             'book_id' => $book->book_id,
+                            'book_photo_path' => $book->book_photo_path,
                             'school_id' => $school->school_id,
                             'school' => $school->name,
                             'books' => [[
@@ -126,6 +127,7 @@ class InventoryController extends Controller
 
             return [
                 'book_id' => $book->book_id,
+                'book_photo_path' => $book->book_photo_path,
                 'title' => $book->title,
                 'total_quantity' => $divisionInventories,
                 'total_received' => $divisionInventories + $totalLost + $totalAvailable,
