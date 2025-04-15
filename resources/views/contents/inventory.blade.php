@@ -63,7 +63,7 @@
                                 <th>Book</th>
                                 <th>Number of Copies Delivered</th>
                                 <th>Actual Number of SLR's</th>
-                                <th>Available</th>
+                                <th>Total Borrowed</th>
                                 <th>Lost/Missing</th>
                                 <th>Action</th>
                             </tr>
@@ -135,7 +135,7 @@
                                 <th>School</th>
                                 <th>Book</th>
                                 <th>Number of copies received</th>
-                                <th>Borrowed</th>
+                                <th>Available</th>
                                 <th>Lost/Missing</th>
                             </tr>
                         </thead>

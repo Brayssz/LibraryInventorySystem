@@ -55,6 +55,7 @@ return new class extends Migration
             $table->enum('status', ['pending', 'approved', 'rejected'])->default('pending');
             $table->unsignedBigInteger('approved_by')->nullable();
             $table->unsignedBigInteger('reference_id')->nullable();
+            $table->text('remarks')->nullable(); 
             $table->timestamps();
 
             $table->foreign('reference_id')->references('reference_id')->on('reference_codes')->onDelete('set null');

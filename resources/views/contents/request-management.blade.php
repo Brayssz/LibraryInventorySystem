@@ -83,6 +83,7 @@
                                 <th>Book</th>
                                 <th>Request Quantity</th>
                                 <th>Released Quantity</th>
+                                <th>Remarks</th>
                                 <th>Status</th>
                                 <th class="no-sort">Action</th>
                             </tr>
@@ -253,6 +254,12 @@
                             "data": "quantity_released"
                         },
                         {
+                            "data": "remarks",
+                            "render": function(data, type, row) {
+                                return data ? data : '<span class="text-muted">No remarks available</span>';
+                            }
+                        },
+                        {
                             "data": null,
                             "render": function(data, type, row) {
                                 return row.status === "approved" ?
@@ -279,7 +286,7 @@
                         }
                     ],
                     "createdRow": function(row, data, dataIndex) {
-                        $(row).find('td').eq(6).addClass('action-table-data');
+                        $(row).find('td').eq(7).addClass('action-table-data');
                     },
                     "initComplete": function(settings, json) {
                         $('.dataTables_filter').appendTo('#tableSearch');

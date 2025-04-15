@@ -38,6 +38,19 @@
                                                     @enderror
                                                 </div>
                                             </div>
+                                            <div class="col-lg-12 col-md-12">
+                                                <div class="mb-3">
+                                                    <label class="form-label" for="remarks">Remarks</label>
+                                                    <div>
+                                                        <textarea rows="7" cols="5" class="form-control"
+                                                            wire:model.lazy="remarks"
+                                                            placeholder="Enter request remarks"></textarea>
+                                                    </div>
+                                                    @error('remarks')
+                                                        <span class="text-danger">{{ $message }}</span>
+                                                    @enderror
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>

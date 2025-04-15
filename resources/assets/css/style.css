@@ -21126,6 +21126,10 @@ body.mini-sidebar.expand-menu .sidebar .sidebar-menu > ul > li.submenu-open ul l
   -webkit-box-align: center;
   -ms-flex-align: center;
 }
+
+.graph-sets > ul li:nth-child(2) span:after {
+  background-color: #007BFF; /* blue */
+}
 .graph-sets > ul {
   display: -webkit-box;
   display: -ms-flexbox;
