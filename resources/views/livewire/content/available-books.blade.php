@@ -29,7 +29,7 @@
                         var publishedYear = new Date(book.published_date).getFullYear();
                         const bookCard = `
                             <div class="col-lg-3 mb-4">
-                                <article class="card card--1" style="min-height: 590px; width: 100%;">
+                                <article class="card card--1" style="min-height: 580px; width: 100%;">
                                     <div class="card__info-hover"></div>
                                     <div class="card__img" style="background-image: url(${photo});"></div>
                                     <a href="#" class="card_link">
