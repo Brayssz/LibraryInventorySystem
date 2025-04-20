@@ -355,7 +355,7 @@
                                     @php
                                         $bookPhotoPath = $top_book->book_photo_path
                                             ? asset('storage/' . $top_book->book_photo_path)
-                                            : null;
+                                            : "img/book.png";
                                     @endphp
                                     <div class="card__img" style="background-image: url({{ $bookPhotoPath }});"></div>
                                     <a href="#" class="card_link">
