@@ -12,9 +12,7 @@ use App\Http\Controllers\Content\ReturnController;
 use App\Http\Controllers\Content\SchoolController;
 use App\Http\Controllers\Content\UserController;
 
-Route::get('/', function () {
-    return view('welcome');
-});
+Route::get('/', [AppController::class, 'landingPage']);
 
 Route::get('/login', [LoginController::class, 'show'])->name('login');
 

@@ -16,18 +16,18 @@ use App\Models\ReferenceCode;
 
 class AppController extends Controller
 {
-    public function showRequestForm (Request $request) {
+    public function showRequestForm(Request $request)
+    {
         if (session()->has('school_id_expires_at') && now()->lessThan(session('school_id_expires_at'))) {
             $school_id = session('school_id');
 
-            return view('contents.request-form',compact('school_id'));
+            return view('contents.request-form', compact('school_id'));
         } else {
             session()->forget('school_id');
             session()->forget('school_id_expires_at');
-            
+
             return redirect('/login')->withErrors('Session expired, please log in again.');
         }
-        
     }
 
     public function showDashboard(Request $request)
@@ -54,8 +54,8 @@ class AppController extends Controller
     {
         $borrowed = BorrowTransaction::join('transactions', 'borrow_transactions.transaction_id', '=', 'transactions.transaction_id')
             ->select(
-            DB::raw("MONTH(borrow_transactions.borrow_timestamp) as month"),
-            DB::raw("SUM(transactions.quantity) as total")
+                DB::raw("MONTH(borrow_transactions.borrow_timestamp) as month"),
+                DB::raw("SUM(transactions.quantity) as total")
             )
             ->groupBy('month')
             ->orderBy('month')
@@ -64,8 +64,8 @@ class AppController extends Controller
 
         $returned = BorrowTransaction::join('return_transactions', 'borrow_transactions.borrow_id', '=', 'return_transactions.borrow_id')
             ->select(
-            DB::raw("MONTH(borrow_transactions.borrow_timestamp) as month"),
-            DB::raw("SUM(return_transactions.quantity) as total")
+                DB::raw("MONTH(borrow_transactions.borrow_timestamp) as month"),
+                DB::raw("SUM(return_transactions.quantity) as total")
             )
             ->groupBy('month')
             ->orderBy('month')
@@ -97,5 +97,28 @@ class AppController extends Controller
             'returned' => $returnedData,
             'lost' => $lostData,
         ]);
+    }
+
+    public function landingPage()
+    {
+        $total_books = Book::where('status', 'available')->count();
+        $total_schools = School::where('status', 'active')->count();
+        $total_copies = Inventory::where('location_type', 'division')->sum('quantity');
+        $top_books = $this->displayTopBooks();
+
+        return view('welcome', compact('top_books', 'total_books', 'total_schools', 'total_copies'));
+    }
+
+    public function displayTopBooks()
+    {
+        $top_books =  BorrowTransaction::join('books', 'borrow_transactions.book_id', '=', 'books.book_id')
+            ->join('transactions', 'borrow_transactions.transaction_id', '=', 'transactions.transaction_id')
+            ->select('books.title', 'books.published_date', 'books.book_photo_path', 'books.author', DB::raw('SUM(transactions.quantity) as total_borrowed'))
+            ->groupBy('books.title', 'books.published_date', 'books.book_photo_path', 'books.author')
+            ->orderBy('total_borrowed', 'desc')
+            ->limit(5)
+            ->get();
+
+        return $top_books;
     }
 }

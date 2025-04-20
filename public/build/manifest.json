@@ -13,6 +13,11 @@
     "src": "resources/assets/css/applicant-sidebar.css",
     "isEntry": true
   },
+  "resources/assets/css/main.css": {
+    "file": "assets/main-BlIUr3Jf.css",
+    "src": "resources/assets/css/main.css",
+    "isEntry": true
+  },
   "resources/assets/css/sidebar.css": {
     "file": "assets/sidebar-Cb-l3zIO.css",
     "src": "resources/assets/css/sidebar.css",
@@ -159,6 +164,12 @@
     "src": "resources/assets/js/leaflet.js",
     "isEntry": true
   },
+  "resources/assets/js/main.js": {
+    "file": "assets/main-BZsDD0WF.js",
+    "name": "main",
+    "src": "resources/assets/js/main.js",
+    "isEntry": true
+  },
   "resources/assets/js/mask.js": {
     "file": "assets/mask-A8G87wI6.js",
     "name": "mask",
@@ -220,7 +231,7 @@
     "isEntry": true
   },
   "resources/css/app.css": {
-    "file": "assets/app-Dytu-aby.css",
+    "file": "assets/app-84owoU7U.css",
     "src": "resources/css/app.css",
     "isEntry": true
   },

@@ -6,6 +6,9 @@ use Livewire\Component;
 use App\Models\BookRequest;
 use App\Models\Inventory;
 use App\Models\ReferenceCode;
+use App\Models\School;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Redirect;
 
 class BorrowBook extends Component
 {
@@ -17,9 +20,26 @@ class BorrowBook extends Component
         'quantity' => 'required|integer|min:1',
     ];
 
+
     public function generateReferenceCode()
     {
         return 'KORLRMDS-' . now()->format('YmdHis');
+    }
+
+    public function checkLogin()
+    {
+        if (session()->has('school_id_expires_at') && now()->lessThan(session('school_id_expires_at'))) {
+
+            $school_id = session('school_id');
+
+
+            return true;
+        } else {
+            session()->forget('school_id');
+            session()->forget('school_id_expires_at');
+
+            return redirect()->route('login');
+        }
     }
 
     public function submit()
@@ -33,7 +53,7 @@ class BorrowBook extends Component
             ->where('location_type', 'division')
             ->first();
 
-        if(!$inventory || $inventory->quantity < $this->quantity) {
+        if (!$inventory || $inventory->quantity < $this->quantity) {
             $this->addError('quantity', 'The quantity must not be larger than the quantity of the requested book.');
             return;
         }
