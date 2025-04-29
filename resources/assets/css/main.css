@@ -1136,7 +1136,7 @@ section,
 .section-title p {
   color: var(--heading-color);
   margin: 0;
-  font-size: 36px;
+  font-size: 27px;
   font-weight: 800;
   text-transform: uppercase;
   font-family: var(--heading-font);

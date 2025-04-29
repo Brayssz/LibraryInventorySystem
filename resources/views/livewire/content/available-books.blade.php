@@ -29,7 +29,7 @@
                         var publishedYear = new Date(book.published_date).getFullYear();
                         const bookCard = `
                             <div class="col-lg-3 mb-4">
-                                <article class="card card--1" style="min-height: 580px; width: 100%;">
+                                <article class="card card--1" style="min-height: 530px; width: 100%;">
                                     <div class="card__info-hover"></div>
                                     <div class="card__img" style="background-image: url(${photo});"></div>
                                     <a href="#" class="card_link">
@@ -37,9 +37,9 @@
                                     </a>
                                     <div class="card__info pb-2">
                                         <span class="card__category">${publishedYear}</span>
-                                        <h4 class="card__title">${book.title}</h4>
-                                        <div class="card__by mt-4">by <a href="#" class="card__author" title="author">${book.author}</a></div>
-                                        <span class="card__category w-100" style="display: inline-block; font-size: 14px; margin-top: 15px;">
+                                        <h6 class="card__title">${book.title}</h6>
+                                        <div class="card__by mt-3">by <a href="#" class="card__author" title="author">${book.author}</a></div>
+                                        <span class="card__category w-100" style="display: inline-block; font-size: 12px; margin-top: 15px;">
                                             ${book.total_quantity} Available Copies
                                         </span>
                                     </div>
