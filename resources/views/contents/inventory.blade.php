@@ -308,7 +308,6 @@
                         $('.dataTables_filter').appendTo('#tableSearch');
                         $('.dataTables_filter').appendTo('.search-input');
                         feather.replace();
-                        hideLoader();
 
                         $('.book_filter, .school_filter').on('change', function() {
                             showLoader();
