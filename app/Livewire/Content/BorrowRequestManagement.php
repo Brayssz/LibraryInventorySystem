@@ -18,6 +18,7 @@ class BorrowRequestManagement extends Component
     public $books = [];
     public $schools = [];
     public $remarks;
+    public $delivered_quantity;
 
     protected $rules = [
         'quantity' => 'required|integer|min:1',
@@ -34,7 +35,6 @@ class BorrowRequestManagement extends Component
     public function submit()
     {
         $this->validate();
-
 
         $inventory = Inventory::where('book_id', $this->book_id)
             ->where('location_type', 'division')
