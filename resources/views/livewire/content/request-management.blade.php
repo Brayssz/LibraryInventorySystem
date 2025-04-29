@@ -75,6 +75,7 @@
                 const status = $(this).data('status');
 
                 if(status !== "pending") {
+                    hideLoader();
                     messageAlert('Invalid Action', 'Request already approved.');
                     return;
                 }
