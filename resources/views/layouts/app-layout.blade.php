@@ -201,7 +201,7 @@
                                     <a href="/inventory"><i data-feather="archive"></i><span>Inventory</span></a>
                                 </li>
                                 <li class="{{ Request::is('book-request') ? 'active' : '' }}">
-                                    <a href="/book-request"><i data-feather="book-open"></i><span>Borrowing Approval</span></a>
+                                    <a href="/book-request"><i data-feather="book-open"></i><span>Borrowing Request</span></a>
                                 </li>
                                 <li class="{{ Request::is('borrowed-books') ? 'active' : '' }}">
                                     <a href="/borrowed-books"><i data-feather="corner-up-left"></i><span>Return Books</span></a>

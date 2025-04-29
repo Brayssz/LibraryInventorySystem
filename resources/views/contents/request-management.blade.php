@@ -95,14 +95,13 @@
         </div>
     </div>
     @livewire('content.borrow-request-management')
+    @livewire('content.request-management')
 
 @endsection
 
 @push('scripts')
     <script>
         $(document).ready(function () {
-
-            
 
             @if (session('message'))
                 toastr.success("{{ session('message') }}", "Success", {
@@ -111,7 +110,7 @@
                 });
             @endif
 
-                if ($('.request-table').length > 0) {
+            if ($('.request-table').length > 0) {
                 var table = $('.request-table').DataTable({
                     "processing": true,
                     "serverSide": true,

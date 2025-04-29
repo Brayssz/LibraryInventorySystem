@@ -21,6 +21,9 @@ class BorrowRequestManagement extends Component
 
     protected $rules = [
         'quantity' => 'required|integer|min:1',
+        'book_id' => 'required|exists:books,book_id',
+        'school_id' => 'required|exists:schools,school_id',
+        'remarks' => 'required|string|max:255',
     ];
 
 

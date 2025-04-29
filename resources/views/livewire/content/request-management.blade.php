@@ -63,20 +63,11 @@
             });
 
             function handleRequestManagementActions() {
-                $(document).on('change', '[id]:not([type="date"]):not([type="time"])', handleInputChange);
                 $(document).on('click', '.approve-request', openApproveRequestModal);
                 $(document).on('click', '.reject-request', RejectRequest);
             }
 
-            function handleInputChange(e) {
-                if ($(e.target).is('select') || $(e.target).is('.not_pass')) {
-                    const property = e.target.id;
-                    const value = e.target.value;
-                    @this.set(property, value);
-
-                    console.log(`${property}: ${value}`);
-                }
-            }
+           
 
             function openApproveRequestModal() {
                 const requestId = $(this).data('requestid');
