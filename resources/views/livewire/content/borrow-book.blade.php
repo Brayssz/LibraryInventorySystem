@@ -1,4 +1,6 @@
-<div>
+
+<div >
+    
     <div class="modal fade" id="borrow-book-modal" wire:ignore.self>
         <div class="modal-dialog">
             <div class="modal-content">
@@ -12,7 +14,7 @@
                         <input type="hidden" wire:model="book_id">
                         <div class="mb-3">
                             <label for="quantity" class="form-label">Quantity</label>
-                            <input type="number" class="form-control" id="quantity" wire:model.lazy="quantity">
+                            <input type="number" class=" input w-100" id="quantity" wire:model.lazy="quantity" style="max-width: 100%;">
                             @error('quantity')
                                 <span class="text-danger">{{ $message }}</span>
                             @enderror

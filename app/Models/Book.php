@@ -24,6 +24,11 @@ class Book extends Model
         return $this->hasMany(Inventory::class, 'book_id');
     }
 
+    public function divisionInventory()
+    {
+        return $this->hasMany(Inventory::class, 'book_id')->where('location_type', 'division');
+    }
+
     public function borrowTransactions()
     {
         return $this->hasMany(BorrowTransaction::class);

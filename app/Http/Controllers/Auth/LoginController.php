@@ -34,7 +34,7 @@ class LoginController extends Controller
             session()->put('school_id', $school->school_id);
             session()->put('school_id_expires_at', now()->addMinutes(10));
 
-            return redirect("/")->with('success', 'Login successful!');
+            return redirect("/#available")->with('success', 'Login successful!');
         }
 
         if (!$user || !Hash::check($request->password, $user->password)) {

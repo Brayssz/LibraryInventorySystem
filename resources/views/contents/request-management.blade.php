@@ -12,16 +12,13 @@
                     <h6>Manage your book requests</h6>
                 </div>
             </div>
-            <ul class="table-top-head">
-                <li>
-                    <a data-bs-toggle="tooltip" data-bs-placement="top" title="Refresh"><i data-feather="rotate-ccw"
-                            class="feather-rotate-ccw"></i></a>
-                </li>
-                <li>
-                    <a data-bs-toggle="tooltip" data-bs-placement="top" title="Collapse" id="collapse-header"><i
-                            data-feather="chevron-up" class="feather-chevron-up"></i></a>
-                </li>
-            </ul>
+
+
+            <div class="page-btn">
+                <a class="btn btn-added add-book-request"><i data-feather="plus-circle" class="me-2"></i>Add New
+                    Book Borrow Request</a>
+            </div>
+
         </div>
         <!-- /request list -->
         <div class="card table-list-card">
@@ -30,12 +27,11 @@
                     <div class="search-set mb-0 d-flex w-100 justify-content-start">
 
                         <div class="search-input text-left">
-                            <a href="" class="btn btn-searchset"><i data-feather="search"
-                                    class="feather-search"></i></a>
+                            <a href="" class="btn btn-searchset"><i data-feather="search" class="feather-search"></i></a>
                         </div>
 
                         <div class="row mt-sm-3 mt-xs-3 mt-lg-0 w-sm-100 flex-grow-1">
-                          
+
                             <div class="col-lg-4 col-sm-12">
                                 <div class="form-group">
                                     <select class="select book_filter form-control">
@@ -98,13 +94,15 @@
             </div>
         </div>
     </div>
-    @livewire('content.request-management')
+    @livewire('content.borrow-request-management')
 
 @endsection
 
 @push('scripts')
     <script>
-        $(document).ready(function() {
+        $(document).ready(function () {
+
+            
 
             @if (session('message'))
                 toastr.success("{{ session('message') }}", "Success", {
@@ -113,7 +111,7 @@
                 });
             @endif
 
-            if ($('.request-table').length > 0) {
+                if ($('.request-table').length > 0) {
                 var table = $('.request-table').DataTable({
                     "processing": true,
                     "serverSide": true,
@@ -132,7 +130,7 @@
                         "headers": {
                             "Accept": "application/json"
                         },
-                        "data": function(d) {
+                        "data": function (d) {
                             d.status = $('.status_filter').val();
                             d.book_id = $('.book_filter').val();
                             d.school_id = $('.school_filter').val();
@@ -145,7 +143,7 @@
                         },
                         {
                             "data": null,
-                            "render": function(data, type, row) {
+                            "render": function (data, type, row) {
 
                                 const colors = {
                                     A: 'bg-primary',
@@ -181,17 +179,17 @@
                                 const bgColor = colors[firstLetter] || 'bg-secondary';
 
                                 return `
-                                    <div class="userimgname">
-                                        <a href="javascript:void(0);" class="product-img">
-                                            <span class="avatar ${bgColor} avatar-rounded">
-                                                <span class="avatar-title">${firstLetter}</span>
-                                            </span>
-                                        </a>
-                                        <div>
-                                            <a href="javascript:void(0);">${row.school.name}</a>
+                                        <div class="userimgname">
+                                            <a href="javascript:void(0);" class="product-img">
+                                                <span class="avatar ${bgColor} avatar-rounded">
+                                                    <span class="avatar-title">${firstLetter}</span>
+                                                </span>
+                                            </a>
+                                            <div>
+                                                <a href="javascript:void(0);">${row.school.name}</a>
+                                            </div>
                                         </div>
-                                    </div>
-                                `;
+                                    `;
 
                             }
                         },
@@ -201,15 +199,15 @@
                                 if (row.book.book_photo_path) {
                                     const avatarSrc = `/storage/${row.book.book_photo_path}`;
                                     return `
-                                        <div class="userimgname">
-                                            <a href="javascript:void(0);" class="product-img">
-                                                <img src="${avatarSrc}" alt="book cover" loading="lazy">
-                                            </a>
-                                            <div>
-                                                <a href="javascript:void(0);">${row.book.title}</a>
+                                            <div class="userimgname">
+                                                <a href="javascript:void(0);" class="product-img">
+                                                    <img src="${avatarSrc}" alt="book cover" loading="lazy">
+                                                </a>
+                                                <div>
+                                                    <a href="javascript:void(0);">${row.book.title}</a>
+                                                </div>
                                             </div>
-                                        </div>
-                                    `;
+                                        `;
                                 } else {
                                     const colors = {
                                         A: 'bg-primary',
@@ -244,17 +242,17 @@
                                     const bgColor = colors[firstLetter] || 'bg-secondary';
 
                                     return `
-                                        <div class="userimgname">
-                                            <a href="javascript:void(0);" class="product-img">
-                                                <span class="avatar ${bgColor} avatar-rounded">
-                                                    <span class="avatar-title">${firstLetter}</span>
-                                                </span>
-                                            </a>
-                                            <div>
-                                                <a href="javascript:void(0);">${row.book.title}</a>
+                                            <div class="userimgname">
+                                                <a href="javascript:void(0);" class="product-img">
+                                                    <span class="avatar ${bgColor} avatar-rounded">
+                                                        <span class="avatar-title">${firstLetter}</span>
+                                                    </span>
+                                                </a>
+                                                <div>
+                                                    <a href="javascript:void(0);">${row.book.title}</a>
+                                                </div>
                                             </div>
-                                        </div>
-                                    `;
+                                        `;
                                 }
                             }
                         },
@@ -266,51 +264,51 @@
                         },
                         {
                             "data": "remarks",
-                            "render": function(data, type, row) {
+                            "render": function (data, type, row) {
                                 return data ? data : '<span class="text-muted">No remarks available</span>';
                             }
                         },
                         {
                             "data": null,
-                            "render": function(data, type, row) {
+                            "render": function (data, type, row) {
                                 return row.status === "approved" ?
                                     `<span class="badge badge-linesuccess">Approved</span>` :
                                     row.status === "rejected" ?
-                                    `<span class="badge badge-linedanger">Rejected</span>` :
-                                    `<span class="badge badge-linewarning">Pending</span>`;
+                                        `<span class="badge badge-linedanger">Rejected</span>` :
+                                        `<span class="badge badge-linewarning">Pending</span>`;
                             }
                         },
                         {
                             "data": null,
-                            "render": function(data, type, row) {
+                            "render": function (data, type, row) {
                                 return `
-                                <div class="edit-delete-action">
-                                    <a class="me-2 p-2 approve-request" data-requestid="${row.request_id}" data-status="${row.status}">
-                                        <i data-feather="check" class="feather-check"></i>
-                                    </a>
-                                    <a class="me-2 p-2 reject-request" data-requestid="${row.request_id}" data-status="${row.status}">
-                                        <i data-feather="x" class="feather-x"></i>
-                                    </a>
-                                </div>
-                            `;
+                                    <div class="edit-delete-action">
+                                        <a class="me-2 p-2 approve-request" data-requestid="${row.request_id}" data-status="${row.status}">
+                                            <i data-feather="check" class="feather-check"></i>
+                                        </a>
+                                        <a class="me-2 p-2 reject-request" data-requestid="${row.request_id}" data-status="${row.status}">
+                                            <i data-feather="x" class="feather-x"></i>
+                                        </a>
+                                    </div>
+                                `;
                             }
                         }
                     ],
-                    "createdRow": function(row, data, dataIndex) {
+                    "createdRow": function (row, data, dataIndex) {
                         $(row).find('td').eq(7).addClass('action-table-data');
                     },
-                    "initComplete": function(settings, json) {
+                    "initComplete": function (settings, json) {
                         $('.dataTables_filter').appendTo('#tableSearch');
                         $('.dataTables_filter').appendTo('.search-input');
                         feather.replace();
                         hideLoader();
 
-                        $('.status_filter, .book_filter, .school_filter').on('change', function() {
+                        $('.status_filter, .book_filter, .school_filter').on('change', function () {
                             console.log('change');
                             table.draw();
                         });
                     },
-                    "drawCallback": function(settings) {
+                    "drawCallback": function (settings) {
                         feather.replace();
                     },
                 });
