@@ -54,7 +54,8 @@
             <div class="header-left active">
                 <a href="index.html" class="logo logo-normal">
                     <div class="d-flex align-items-center">
-                        <img src="img/logo.jpg" alt="" class="me-2" style="max-height: 40px; max-width: 40px;" />
+                        <img src="img/logo.jpg" alt="" class="me-2"
+                            style="max-height: 40px; max-width: 40px;" />
                         <div class="text-start">
                             <h5 class="mb-2">LRMDS</h5>
                             <p class="mb-0" style="font-size: 12px;">Koronadal City Division</p>
@@ -64,10 +65,10 @@
 
                 </a>
                 <a href="index.html" class="logo logo-white">
-                    <img src="img/logo.jpg" alt="" style="min-height: 40px; min-width: 40px;"/>
+                    <img src="img/logo.jpg" alt="" style="min-height: 40px; min-width: 40px;" />
                 </a>
                 <a href="index.html" class="logo-small">
-                    <img src="img/logo.jpg" alt="" style="min-height: 40px; min-width: 40px;"/>
+                    <img src="img/logo.jpg" alt="" style="min-height: 40px; min-width: 40px;" />
                 </a>
                 <a id="toggle_btn" href="javascript:void(0);">
                     <i data-feather="chevrons-left" class="feather-16"></i>
@@ -142,7 +143,8 @@
                                 <img src="img/icons/log-out.svg" class="me-2" alt="img" />Logout
                             </a>
 
-                            <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
+                            <form id="logout-form" action="{{ route('logout') }}" method="POST"
+                                style="display: none;">
                                 @csrf
                             </form>
                         </div>
@@ -165,6 +167,7 @@
         </div>
         <!-- /Header -->
 
+        @livewire('content.notification')
         <!-- Sidebar -->
         <div class="sidebar" id="sidebar">
             <div class="sidebar-inner slimscroll">
@@ -201,10 +204,15 @@
                                     <a href="/inventory"><i data-feather="archive"></i><span>Inventory</span></a>
                                 </li>
                                 <li class="{{ Request::is('book-request') ? 'active' : '' }}">
-                                    <a href="/book-request"><i data-feather="book-open"></i><span>Borrowing Request</span></a>
+                                    <a href="/book-request">
+                                        <i data-feather="book-open"></i>
+                                        <span>Borrowing Request</span>
+                                        <span class="badge-notif">0</span>
+                                    </a>
                                 </li>
                                 <li class="{{ Request::is('borrowed-books') ? 'active' : '' }}">
-                                    <a href="/borrowed-books"><i data-feather="corner-up-left"></i><span>Return Books</span></a>
+                                    <a href="/borrowed-books"><i data-feather="corner-up-left"></i><span>Return
+                                            Books</span></a>
                                 </li>
                             </ul>
                         </li>
@@ -212,27 +220,33 @@
                             <h6 class="submenu-hdr">Reports</h6>
                             <ul>
                                 <li class="{{ Request::is('delivery-transactions-report') ? 'active' : '' }}">
-                                    <a href="delivery-transactions-report"><i data-feather="truck"></i><span>Delivery Transaction</span></a>
+                                    <a href="delivery-transactions-report"><i data-feather="truck"></i><span>Delivery
+                                            Transaction</span></a>
                                 </li>
 
                                 <li class="{{ Request::is('book-requests-report') ? 'active' : '' }}">
-                                    <a href="book-requests-report"><i data-feather="book-open"></i><span>Borrow Requests</span></a>
+                                    <a href="book-requests-report"><i data-feather="book-open"></i><span>Borrow
+                                            Requests</span></a>
                                 </li>
 
                                 <li class="{{ Request::is('books-distribution-report') ? 'active' : '' }}">
-                                    <a href="books-distribution-report"><i data-feather="book"></i><span>Book Distribution</span></a>
+                                    <a href="books-distribution-report"><i data-feather="book"></i><span>Book
+                                            Distribution</span></a>
                                 </li>
 
                                 <li class="{{ Request::is('borrowing-transaction-report') ? 'active' : '' }}">
-                                    <a href="/borrowing-transaction-report"><i data-feather="file-text"></i><span>Borrowing Transaction</span></a>
+                                    <a href="/borrowing-transaction-report"><i
+                                            data-feather="file-text"></i><span>Borrowing Transaction</span></a>
                                 </li>
 
                                 <li class="{{ Request::is('returned-books-report') ? 'active' : '' }}">
-                                    <a href="/returned-books-report"><i data-feather="rotate-ccw"></i><span>Return Transaction</span></a>
+                                    <a href="/returned-books-report"><i data-feather="rotate-ccw"></i><span>Return
+                                            Transaction</span></a>
                                 </li>
 
                                 <li class="{{ Request::is('book-inventory-report') ? 'active' : '' }}">
-                                    <a href="/book-inventory-report"><i data-feather="archive"></i><span>Book Inventory</span></a>
+                                    <a href="/book-inventory-report"><i data-feather="archive"></i><span>Book
+                                            Inventory</span></a>
                                 </li>
 
                             </ul>

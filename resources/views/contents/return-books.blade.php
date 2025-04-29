@@ -27,16 +27,7 @@
 
                         <div class="row mt-sm-3 mt-xs-3 mt-lg-0 w-sm-100 flex-grow-1">
                           
-                            <div class="col-lg-4 col-sm-12">
-                                <div class="form-group">
-                                    <select class="select book_filter form-control">
-                                        <option value="">Book</option>
-                                        @foreach ($books as $book)
-                                            <option value="{{ $book->book_id }}">{{ $book->title }}</option>
-                                        @endforeach
-                                    </select>
-                                </div>
-                            </div>
+                           
 
                             <div class="col-lg-4 col-sm-12">
                                 <div class="form-group">
@@ -56,6 +47,16 @@
                                         <option value="borrowed">Borrowed</option>
                                         <option value="partially_returned">Partially Returned</option>
                                         <option value="returned">Returned</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-lg-3 col-sm-12">
+                                <div class="form-group">
+                                    <select class="search-select book_filter form-control">
+                                        <option value="">Book</option>
+                                        @foreach ($books as $book)
+                                            <option value="{{ $book->book_id }}">{{ $book->title }}</option>
+                                        @endforeach
                                     </select>
                                 </div>
                             </div>
@@ -97,6 +98,14 @@
 @push('scripts')
     <script>
         $(document).ready(function() {
+
+            $('.search-select').select2();
+
+            $('.search-select').on('select2:open', function() {
+                document.querySelector('.select2-container--open .select2-search__field').placeholder =
+                    'Search books here...';
+
+            });
 
             @if (session('message'))
                 toastr.success("{{ session('message') }}", "Success", {
@@ -312,11 +321,16 @@
                         feather.replace();
 
                         $('.status_filter, .book_filter, .school_filter').on('change', function() {
+                            showLoader();
                             table.draw();
                         });
                     },
                     "drawCallback": function(settings) {
+                        hideLoader();
                         feather.replace();
+                    },
+                    "preDrawCallback": function(settings) {
+                        showLoader();
                     },
                 });
             }
