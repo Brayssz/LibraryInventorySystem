@@ -27,21 +27,13 @@
                     <div class="search-set mb-0 d-flex w-100 justify-content-start">
 
                         <div class="search-input text-left">
-                            <a href="" class="btn btn-searchset"><i data-feather="search" class="feather-search"></i></a>
+                            <a href="" class="btn btn-searchset"><i data-feather="search"
+                                    class="feather-search"></i></a>
                         </div>
 
                         <div class="row mt-sm-3 mt-xs-3 mt-lg-0 w-sm-100 flex-grow-1">
 
-                            <div class="col-lg-4 col-sm-12">
-                                <div class="form-group">
-                                    <select class="select book_filter form-control">
-                                        <option value="">Book</option>
-                                        @foreach ($books as $book)
-                                            <option value="{{ $book->book_id }}">{{ $book->title }}</option>
-                                        @endforeach
-                                    </select>
-                                </div>
-                            </div>
+                           
 
                             <div class="col-lg-4 col-sm-12">
                                 <div class="form-group">
@@ -61,6 +53,16 @@
                                         <option value="pending">Pending</option>
                                         <option value="approved">Approved</option>
                                         <option value="rejected">Rejected</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-lg-3 col-sm-12">
+                                <div class="form-group">
+                                    <select class="search-select book_filter form-control">
+                                        <option value="">Book</option>
+                                        @foreach ($books as $book)
+                                            <option value="{{ $book->book_id }}">{{ $book->title }}</option>
+                                        @endforeach
                                     </select>
                                 </div>
                             </div>
@@ -101,8 +103,14 @@
 
 @push('scripts')
     <script>
-        $(document).ready(function () {
+        $(document).ready(function() {
+            $('.search-select').select2();
 
+            $('.search-select').on('select2:open', function() {
+                document.querySelector('.select2-container--open .select2-search__field').placeholder =
+                    'Search books here...';
+
+            });
             @if (session('message'))
                 toastr.success("{{ session('message') }}", "Success", {
                     closeButton: true,
@@ -129,20 +137,19 @@
                         "headers": {
                             "Accept": "application/json"
                         },
-                        "data": function (d) {
+                        "data": function(d) {
                             d.status = $('.status_filter').val();
                             d.book_id = $('.book_filter').val();
                             d.school_id = $('.school_filter').val();
                         },
                         "dataSrc": "data"
                     },
-                    "columns": [
-                        {
+                    "columns": [{
                             "data": "reference_code.reference_code"
                         },
                         {
                             "data": null,
-                            "render": function (data, type, row) {
+                            "render": function(data, type, row) {
 
                                 const colors = {
                                     A: 'bg-primary',
@@ -194,7 +201,7 @@
                         },
                         {
                             "data": null,
-                            "render": function (data, type, row) {
+                            "render": function(data, type, row) {
                                 if (row.book.book_photo_path) {
                                     const avatarSrc = `/storage/${row.book.book_photo_path}`;
                                     return `
@@ -237,7 +244,8 @@
                                         Z: 'bg-success'
                                     };
 
-                                    const firstLetter = row.book.title ? row.book.title.charAt(0).toUpperCase() : 'A';
+                                    const firstLetter = row.book.title ? row.book.title.charAt(0)
+                                        .toUpperCase() : 'A';
                                     const bgColor = colors[firstLetter] || 'bg-secondary';
 
                                     return `
@@ -263,23 +271,24 @@
                         },
                         {
                             "data": "remarks",
-                            "render": function (data, type, row) {
-                                return data ? data : '<span class="text-muted">No remarks available</span>';
+                            "render": function(data, type, row) {
+                                return data ? data :
+                                    '<span class="text-muted">No remarks available</span>';
                             }
                         },
                         {
                             "data": null,
-                            "render": function (data, type, row) {
+                            "render": function(data, type, row) {
                                 return row.status === "approved" ?
                                     `<span class="badge badge-linesuccess">Approved</span>` :
                                     row.status === "rejected" ?
-                                        `<span class="badge badge-linedanger">Rejected</span>` :
-                                        `<span class="badge badge-linewarning">Pending</span>`;
+                                    `<span class="badge badge-linedanger">Rejected</span>` :
+                                    `<span class="badge badge-linewarning">Pending</span>`;
                             }
                         },
                         {
                             "data": null,
-                            "render": function (data, type, row) {
+                            "render": function(data, type, row) {
                                 return `
                                     <div class="edit-delete-action">
                                         <a class="me-2 p-2 approve-request" data-requestid="${row.request_id}" data-status="${row.status}">
@@ -293,22 +302,25 @@
                             }
                         }
                     ],
-                    "createdRow": function (row, data, dataIndex) {
+                    "createdRow": function(row, data, dataIndex) {
                         $(row).find('td').eq(7).addClass('action-table-data');
                     },
-                    "initComplete": function (settings, json) {
+                    "initComplete": function(settings, json) {
                         $('.dataTables_filter').appendTo('#tableSearch');
                         $('.dataTables_filter').appendTo('.search-input');
                         feather.replace();
-                        hideLoader();
 
-                        $('.status_filter, .book_filter, .school_filter').on('change', function () {
-                            console.log('change');
+                        $('.status_filter, .book_filter, .school_filter').on('change', function() {
+                            showLoader();
                             table.draw();
                         });
                     },
-                    "drawCallback": function (settings) {
+                    "drawCallback": function(settings) {
+                        hideLoader();
                         feather.replace();
+                    },
+                    "preDrawCallback": function(settings) {
+                        showLoader();
                     },
                 });
 
