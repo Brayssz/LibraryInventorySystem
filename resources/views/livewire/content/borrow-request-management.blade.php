@@ -42,6 +42,7 @@
                                                     @enderror
                                                 </div>
                                             </div>
+                                            
                                             <div class="col-lg-12 col-md-12">
                                                 <div class="mb-3">
                                                     <label class="form-label" for="book_id">Book to Borrowed</label>

@@ -70,6 +70,7 @@
            
 
             function openApproveRequestModal() {
+                showLoader();
                 const requestId = $(this).data('requestid');
                 const status = $(this).data('status');
 
@@ -83,6 +84,7 @@
 
                     @this.set('delivered_quantity', 0);
                     $('#receive-copies-modal').modal('show');
+                    hideLoader();
                 });
             }
 
