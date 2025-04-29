@@ -40,9 +40,9 @@
 
                         <div class="row mt-sm-3 mt-xs-3 mt-lg-0 w-sm-100 flex-grow-1">
 
-                            <div class="col-lg-4 col-sm-12">
+                            <div class="col-lg-3 col-sm-12">
                                 <div class="form-group">
-                                    <select class="select book_div_filter form-control">
+                                    <select class="search-select book_div_filter form-control">
                                         <option value="">Book</option>
                                         @foreach ($l_books as $book)
                                             <option value="{{ $book->book_id }}">{{ $book->title }}</option>
@@ -86,7 +86,7 @@
                     <h6>Manage Schools Inventory</h6>
                 </div>
             </div>
-           
+
 
         </div>
         <!-- /book list -->
@@ -112,9 +112,9 @@
                                     </select>
                                 </div>
                             </div>
-                            <div class="col-lg-4 col-sm-12">
+                            <div class="col-lg-3 col-sm-12">
                                 <div class="form-group">
-                                    <select class="select book_filter form-control">
+                                    <select class="search-select book_filter form-control">
                                         <option value="">Book</option>
                                         @foreach ($l_books as $book)
                                             <option value="{{ $book->book_id }}">{{ $book->title }}</option>
@@ -158,6 +158,14 @@
 @push('scripts')
     <script>
         $(document).ready(function() {
+
+            $('.search-select').select2();
+
+            $('.search-select').on('select2:open', function() {
+                document.querySelector('.select2-container--open .select2-search__field').placeholder =
+                    'Search books here...';
+
+            });
 
             @if (session('message'))
                 toastr.success("{{ session('message') }}", "Success", {
@@ -221,7 +229,7 @@
                         },
                         {
                             "data": null,
-                            "render": function (data, type, row) {
+                            "render": function(data, type, row) {
                                 if (row.book_photo_path) {
                                     const avatarSrc = `/storage/${row.book_photo_path}`;
                                     return `
@@ -264,7 +272,8 @@
                                         Z: 'bg-success'
                                     };
 
-                                    const firstLetter = row.title ? row.title.charAt(0).toUpperCase() : 'A';
+                                    const firstLetter = row.title ? row.title.charAt(0)
+                                    .toUpperCase() : 'A';
                                     const bgColor = colors[firstLetter] || 'bg-secondary';
 
                                     return `
@@ -291,21 +300,6 @@
                         {
                             "data": "lost"
                         }
-                        // {
-                        //     "data": null,
-                        //     "render": function(data, type, row) {
-                        //         return `
-                        //             <div class="edit-delete-action">
-                        //                 <a class="me-2 p-2 receive-copies" data-bookid="${row.book_id}" data-schoolid="${row.school_id}" data-inventoryid="${row.inventory_id}">
-                        //                     <i data-feather="download" class="feather-download"></i>
-                        //                 </a>
-                        //                 <a class="me-2 p-2 lost-copies" data-inventoryid="${row.inventory_id}">
-                        //                     <i data-feather="alert-circle" class="feather-alert-circle"></i>
-                        //                 </a>
-                        //             </div>
-                        //         `;
-                        //     }
-                        // }
                     ],
                     "createdRow": function(row, data, dataIndex) {
                         $(row).find('td').eq(5).addClass('action-table-data');
@@ -317,11 +311,16 @@
                         hideLoader();
 
                         $('.book_filter, .school_filter').on('change', function() {
+                            showLoader();
                             bookTable.ajax.reload();
                         });
                     },
                     "drawCallback": function(settings) {
+                        hideLoader();
                         feather.replace();
+                    },
+                    "preDrawCallback": function(settings) {
+                        showLoader();
                     },
                 });
             }
@@ -401,7 +400,8 @@
                                         Z: 'bg-success'
                                     };
 
-                                    const firstLetter = row.title ? row.title.charAt(0).toUpperCase() : 'A';
+                                    const firstLetter = row.title ? row.title.charAt(0)
+                                    .toUpperCase() : 'A';
                                     const bgColor = colors[firstLetter] || 'bg-secondary';
 
                                     return `
@@ -453,11 +453,16 @@
                         feather.replace();
 
                         $('.book_div_filter').on('change', function() {
+                            showLoader();
                             divisionTable.draw();
                         });
                     },
                     "drawCallback": function(settings) {
+                        hideLoader();
                         feather.replace();
+                    },
+                    "preDrawCallback": function(settings) {
+                        showLoader();
                     },
                 });
             }
