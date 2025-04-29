@@ -70,7 +70,7 @@
                             <div class="modal-footer-btn mb-4 mt-0">
                                 <button type="button" class="btn btn-cancel me-2"
                                     data-bs-dismiss="modal">Cancel</button>
-                                <button type="submit" class="btn btn-submit" wire:loading.attr="disabled" onclick="showLoader()">Submit</button>
+                                <button type="submit" class="btn btn-submit" wire:loading.attr="disabled">Submit</button>
                             </div>
                         </form>
                     </div>
