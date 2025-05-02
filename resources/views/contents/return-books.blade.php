@@ -74,9 +74,9 @@
                                 <th>Reference Code</th>
                                 <th>School</th>
                                 <th>Book</th>
-                                <th>Remaining Quantity</th>
-                                <th>Returned Quantity</th>
-                                <th>Lost Quantity</th>
+                                <th>Remaining Qty</th>
+                                <th>Returned Qty</th>
+                                <th>Lost Qty</th>
                                 <th>Status</th>
                                 <th class="no-sort">Action</th>
                             </tr>
@@ -144,50 +144,14 @@
                         {
                             "data": "transaction.reference_code.reference_code"
                         },
+                      
                         {
                             "data": null,
                             "render": function(data, type, row) {
-                                const colors = {
-                                    A: 'bg-primary',
-                                    B: 'bg-success',
-                                    C: 'bg-info',
-                                    D: 'bg-warning',
-                                    E: 'bg-danger',
-                                    F: 'bg-secondary',
-                                    G: 'bg-dark',
-                                    H: 'bg-light',
-                                    I: 'bg-primary',
-                                    J: 'bg-success',
-                                    K: 'bg-info',
-                                    L: 'bg-warning',
-                                    M: 'bg-danger',
-                                    N: 'bg-secondary',
-                                    O: 'bg-dark',
-                                    P: 'bg-light',
-                                    Q: 'bg-primary',
-                                    R: 'bg-success',
-                                    S: 'bg-info',
-                                    T: 'bg-warning',
-                                    U: 'bg-danger',
-                                    V: 'bg-secondary',
-                                    W: 'bg-dark',
-                                    X: 'bg-light',
-                                    Y: 'bg-primary',
-                                    Z: 'bg-success'
-                                };
-
-                                const firstLetter = row.transaction.reference_code.book_requests[0]
-                                    .school.name ? row.transaction.reference_code.book_requests[0]
-                                    .school.name.charAt(0).toUpperCase() : 'A';
-                                const bgColor = colors[firstLetter] || 'bg-secondary';
 
                                 return `
                                     <div class="userimgname">
-                                        <a href="javascript:void(0);" class="product-img">
-                                            <span class="avatar ${bgColor} avatar-rounded">
-                                                <span class="avatar-title">${firstLetter}</span>
-                                            </span>
-                                        </a>
+                                      
                                         <div>
                                             <a href="javascript:void(0);">${row.transaction.reference_code.book_requests[0].school.name}</a>
                                         </div>
@@ -267,7 +231,7 @@
                                     totalReturnedQuantity = row.return_transactions.reduce((total,
                                         transaction) => total + transaction.quantity, 0);
                                 }
-                                return row.transaction.quantity - totalReturnedQuantity;
+                                return `<div class="text-center">${row.transaction.quantity - totalReturnedQuantity}</div>`;
                             }
                         },
                         {
@@ -278,11 +242,14 @@
                                     totalReturnedQuantity = row.return_transactions.reduce((total,
                                         transaction) => total + transaction.quantity, 0);
                                 }
-                                return totalReturnedQuantity;
+                                return `<div class="text-center">${totalReturnedQuantity}</div>`;
                             }
                         },
                         {
-                            "data": "quantity_lost"
+                            "data": "quantity_lost",
+                            "render": function(data, type, row) {
+                                return `<div class="text-center">${data}</div>`;
+                            }
                         },
                         {
                             "data": null,

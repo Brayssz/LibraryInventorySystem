@@ -79,8 +79,8 @@
                                 <th>Reference Code</th>
                                 <th>School</th>
                                 <th>Book</th>
-                                <th>Request Quantity</th>
-                                <th>Released Quantity</th>
+                                <th>Request Qty</th>
+                                <th>Released Qty</th>
                                 <th>Remarks</th>
                                 <th>Status</th>
                                 <th class="no-sort">Action</th>
@@ -264,10 +264,16 @@
                             }
                         },
                         {
-                            "data": "quantity"
+                            "data": "quantity",
+                            "render": function(data, type, row) {
+                                return `<div class="text-center">${data}</div>`;
+                            }
                         },
                         {
-                            "data": "quantity_released"
+                            "data": "quantity_released",
+                            "render": function(data, type, row) {
+                                return `<div class="text-center">${data}</div>`;
+                            }
                         },
                         {
                             "data": "remarks",
