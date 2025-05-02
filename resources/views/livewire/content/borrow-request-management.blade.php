@@ -47,7 +47,7 @@
                                                 <div class="mb-3">
                                                     <label class="form-label" for="book_id">Book to Borrowed</label>
                                                     <div wire:ignore>
-                                                        <select id="book_id" class="form-control search-select"
+                                                        <select id="book_id" class="form-control search-book-select"
                                                             wire:model="book_id">
                                                             <option value="">Select Book to Borrow</option>
                                                             @foreach ($books as $book)
@@ -112,16 +112,14 @@
     @push('scripts')
         <script>
             $(document).ready(function () {
-                $('.search-select').select2({
+                $('.search-book-select').select2({
                     dropdownParent: $('#borrow-book-modal')
                 });
 
-                $('.search-select').on('select2:open', function () {
+                $('.search-book-select').on('select2:open', function () {
                     document.querySelector('.select2-container--open .select2-search__field').placeholder = 'Search books here...';
                     
                 });
-
-
             });
 
             document.addEventListener('DOMContentLoaded', () => {
