@@ -98,6 +98,49 @@
                     </a>
                 </li>
 
+                <li class="nav-item dropdown nav-item-box">
+                    <a href="javascript:void(0);" class="dropdown-toggle nav-link notification">
+                        <i data-feather="bell"></i><span class="badge rounded-pill notif-count">2</span>
+                    </a>
+                    <div class="dropdown-menu notifications">
+                        <div class="topnav-dropdown-header">
+                            <span class="notification-title">Notifications</span>
+                            <a href="javascript:void(0)" class="clear-noti"> Read All </a>
+                        </div>
+                        <div class="noti-content">
+                            <ul class="notification-list">
+                                <li class="notification-message">
+                                    <a>
+                                        <div class="media d-flex">
+                                            <span class="avatar avatar-md bg-success">
+                                                <span class="avatar-title">i</span>
+                                            </span>
+                                            <div class="media-body flex-grow-1">
+                                                <p class="noti-details">
+                                                    {{-- <span class="noti-title">John Doe</span> added new
+                                        task --}}
+                                                    <span class="noti-title">Patient appointment booking sadasdsada
+                                                        dasdadasd sadsadasdsadasdadada</span>
+                                                </p>
+                                                <div class="row">
+                                                    <p class="noti-time col-lg-6">
+                                                        <span class="notification-time">4 mins ago</span>
+                                                    </p>
+                                                    <p class="noti-time col-lg-6 text-end">
+                                                        <span class="notification-time">Read</span>
+                                                    </p>
+                                                </div>
+
+                                            </div>
+                                        </div>
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+
+                    </div>
+                </li>
+
 
                 <li class="nav-item dropdown has-arrow main-drop">
                     <a href="javascript:void(0);" class="dropdown-toggle nav-link userset" data-bs-toggle="dropdown">
@@ -207,12 +250,13 @@
                                     <a href="/book-request">
                                         <i data-feather="book-open"></i>
                                         <span>Borrowing Request</span>
-                                        <span class="badge-notif">0</span>
+                                        <span class="badge-notif new">0</span>
                                     </a>
                                 </li>
                                 <li class="{{ Request::is('borrowed-books') ? 'active' : '' }}">
                                     <a href="/borrowed-books"><i data-feather="corner-up-left"></i><span>Return
-                                            Books</span></a>
+                                            Books</span>
+                                        <span class="badge-notif due">0</span></a>
                                 </li>
                             </ul>
                         </li>

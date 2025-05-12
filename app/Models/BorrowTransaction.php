@@ -12,7 +12,7 @@ class BorrowTransaction extends Model
     protected $primaryKey = 'borrow_id';
 
     protected $fillable = [
-        'book_id', 'user_id', 'transaction_id', 'borrow_timestamp', 'return_date', 'quantity_lost', 'status',
+        'book_id', 'user_id', 'transaction_id', 'borrow_timestamp', 'return_date', 'quantity_lost', 
     ];
 
     public function book()

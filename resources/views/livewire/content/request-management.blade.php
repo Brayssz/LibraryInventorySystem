@@ -30,7 +30,7 @@
                                                         <span class="quantity-btn me-auto">+<i
                                                                 data-feather="plus-circle"
                                                                 class="plus-circle"></i></span>
-                                                        <input type="number" class="quntity-input not_pass"
+                                                        <input type="number" class="quntity-input delivery_qty"
                                                             id="delivered_quantity" wire:model.lazy="delivered_quantity">
                                                         <span class="quantity-btn ms-auto"><i
                                                                 data-feather="minus-circle"
@@ -65,6 +65,15 @@
             function handleRequestManagementActions() {
                 $(document).on('click', '.approve-request', openApproveRequestModal);
                 $(document).on('click', '.reject-request', RejectRequest);
+                $(document).on('input', '.delivery_qty', handleInputChangeRelease);
+            }
+
+            function handleInputChangeRelease(e) {
+                const property = e.target.id;
+                const value = e.target.value;
+                @this.set(property, value);
+
+                console.log(`${property}: ${value}`);
             }
 
            

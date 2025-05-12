@@ -15,6 +15,10 @@ class RequestManagement extends Component
     public $delivered_quantity;
     public $status;
 
+    public $school_id;
+    public $book_id;
+    public $quantity;
+
     protected $rules = [
         'delivered_quantity' => 'required|integer|min:1',
     ];
@@ -135,6 +139,7 @@ class RequestManagement extends Component
     {
         $this->request_id = null;
         $this->delivered_quantity = null;
+        $this->expected_return_date = null;
     }
 
     public function render()

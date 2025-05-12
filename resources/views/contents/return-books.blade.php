@@ -77,6 +77,7 @@
                                 <th>Remaining Qty</th>
                                 <th>Returned Qty</th>
                                 <th>Lost Qty</th>
+                                <th>Expected Return Date</th>
                                 <th>Status</th>
                                 <th class="no-sort">Action</th>
                             </tr>
@@ -153,7 +154,7 @@
                                     <div class="userimgname">
                                       
                                         <div>
-                                            <a href="javascript:void(0);">${row.transaction.reference_code.book_requests[0].school.name}</a>
+                                            <a href="javascript:void(0);">${row.transaction.reference_code.book_request.school.name}</a>
                                         </div>
                                     </div>
                                 `;
@@ -252,12 +253,23 @@
                             }
                         },
                         {
+                            "data": "transaction.reference_code.book_request.expected_return_date",
+                            "render": function(data, type, row) {
+                                const date = new Date(data);
+                                const options = { year: 'numeric', month: 'long', day: 'numeric' };
+                                const formattedDate = date.toLocaleDateString('en-US', options);
+                                return `<div class="text-center">${formattedDate}</div>`;
+                            }
+                        },
+                        {
                             "data": null,
                             "render": function(data, type, row) {
                                 if (row.status === "returned") {
                                     return `<span class="badge badge-linesuccess">Returned</span>`;
                                 } else if (row.status === "borrowed") {
                                     return `<span class="badge badge-linewarning">Pending</span>`;
+                                } else if (row.status === "due") {
+                                    return `<span class="badge badge-linedanger">Due</span>`;
                                 } else {
                                     return `<span class="badge badge-linewarning">Partially Returned</span>`;
                                 }
@@ -268,10 +280,10 @@
                             "render": function(data, type, row) {
                                 return `
                                 <div class="edit-delete-action">
-                                    <a class="me-2 p-2 partial-return-book" data-borrowid="${row.borrow_id}" data-schoolid="${row.transaction.reference_code.book_requests[0].school_id}" data-status="${row.status}">
+                                    <a class="me-2 p-2 partial-return-book" data-borrowid="${row.borrow_id}" data-schoolid="${row.transaction.reference_code.book_request.school_id}" data-status="${row.status}">
                                         <i data-feather="clock" class="feather-clock"></i>
                                     </a>
-                                    <a class="me-2 p-2 return-book" data-borrowid="${row.borrow_id}" data-schoolid="${row.transaction.reference_code.book_requests[0].school_id}" data-status="${row.status}">
+                                    <a class="me-2 p-2 return-book" data-borrowid="${row.borrow_id}" data-schoolid="${row.transaction.reference_code.book_request.school_id}" data-status="${row.status}">
                                         <i data-feather="check" class="feather-check"></i>
                                     </a>
                                 </div>
@@ -280,7 +292,7 @@
                         }
                     ],
                     "createdRow": function(row, data, dataIndex) {
-                        $(row).find('td').eq(7).addClass('action-table-data');
+                        $(row).find('td').eq(8).addClass('action-table-data');
                     },
                     "initComplete": function(settings, json) {
                         $('.dataTables_filter').appendTo('#tableSearch');

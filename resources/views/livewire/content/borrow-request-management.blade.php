@@ -1,5 +1,5 @@
 <div class="modal fade" id="borrow-book-modal" wire:ignore.self>
-    <div class="modal-dialog modal-dialog-centered modal-mdM custom-modal-two">
+    <div class="modal-dialog modal-dialog-centered modal-lg custom-modal-two">
         <div class="modal-content">
             <div class="page-wrapper-new p-0">
                 <div class="content">
@@ -65,6 +65,18 @@
 
                                             <div class="col-lg-12 col-md-12">
                                                 <div class="mb-3">
+                                                    <label class="form-label" for="expected_return_date">Expected Return Date</label>
+                                                    <div>
+                                                        <input type="date" id="expected_return_date" class="form-control" wire:model.lazy="expected_return_date">
+                                                    </div>
+                                                    @error('expected_return_date')
+                                                        <span class="text-danger">{{ $message }}</span>
+                                                    @enderror
+                                                </div>
+                                            </div>
+
+                                            <div class="col-lg-12 col-md-12">
+                                                <div class="mb-3">
                                                     <label class="form-label" for="quantity">Quantity</label>
                                                     <div class="product-quantity px-4" wire:ignore>
                                                         <span class="quantity-btn me-auto">+<i
@@ -81,6 +93,8 @@
                                                     @enderror
                                                 </div>
                                             </div>
+
+                                            
                                             <div class="col-lg-12 col-md-12">
                                                 <div class="mb-3">
                                                     <label class="form-label" for="remarks">Remarks</label>

@@ -13,7 +13,7 @@ class ReturnController extends Controller
     public function showBorrowTransactions(Request $request)
     {
         if ($request->ajax()) {
-            $query = BorrowTransaction::query()->with('book', 'user', 'transaction', 'transaction.referenceCode.bookRequests.school', 'returnTransactions', 'transaction.referenceCode');
+            $query = BorrowTransaction::query()->with('book', 'user', 'transaction', 'transaction.referenceCode.bookRequest.school', 'returnTransactions', 'transaction.referenceCode');
 
             if ($request->filled('status')) {
                 $query->where('status', $request->status);

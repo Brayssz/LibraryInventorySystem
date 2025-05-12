@@ -110,7 +110,6 @@
                                         <tr>
                                             <th>#</th>
                                             <th>Book Title</th>
-                                            <th>Published Date</th>
                                             <th>Borrowed</th>
                                         </tr>
                                     </thead>
@@ -118,26 +117,28 @@
                                         @foreach ($top_borrowed_books as $book)
                                             <tr>
                                                 <td>{{ $loop->iteration }}</td>
-                                                <td>
-													@php
-														$bookPhotoPath = $book->book_photo_path ? asset('storage/' . $book->book_photo_path) : null;
-													@endphp
-										
-													@if ($bookPhotoPath)
-														<img src="{{ $bookPhotoPath }}" alt="book cover" loading="lazy" style="height: 2.65rem;" class="rounded-2">
-													@else
-														@php
-															$bookFirstLetter = strtoupper(substr($book->title, 0, 1));
-															$bgColor = $colors[$bookFirstLetter] ?? 'bg-secondary';
-														@endphp
-														<span class="avatar {{ $bgColor }} avatar-rounded" style="height: 2.65rem;">
-															<span class="avatar-title">{{ $bookFirstLetter }}</span>
-														</span>
-													@endif
-										
-													<a>{{ $book->title }}</a>
-												</td>
-												<td>{{ \Carbon\Carbon::parse($book->published_date)->format('Y') }}</td>
+                                                <td class="d-flex align-items-center">
+                                                    @php
+                                                        $bookPhotoPath = $book->book_photo_path ? asset('storage/' . $book->book_photo_path) : null;
+                                                    @endphp
+
+                                                    @if ($bookPhotoPath)
+                                                        <img src="{{ $bookPhotoPath }}" alt="book cover" loading="lazy" style="height: 2.65rem;" class="rounded-2 me-2">
+                                                    @else
+                                                        @php
+                                                            $bookFirstLetter = strtoupper(substr($book->title, 0, 1));
+                                                            $bgColor = $colors[$bookFirstLetter] ?? 'bg-secondary';
+                                                        @endphp
+                                                        <span class="avatar {{ $bgColor }} avatar-rounded me-2" style="height: 2.65rem;">
+                                                            <span class="avatar-title">{{ $bookFirstLetter }}</span>
+                                                        </span>
+                                                    @endif
+
+                                                    <div>
+                                                        <a>{{ $book->title }}</a>
+                                                        <span class="emp-team d-block text-muted" style="font-size: 0.80rem;">Copyright &copy; {{ \Carbon\Carbon::parse($book->published_date)->format('Y') }}</span>
+                                                    </div>
+                                                </td>
                                                 <td>{{ $book->total_borrowed }}</td>
                                             </tr>
                                         @endforeach

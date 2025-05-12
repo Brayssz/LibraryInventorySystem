@@ -1,5 +1,4 @@
 <div>
-    
     @push('scripts')
         <script>
             $(document).ready(function() {
@@ -18,7 +17,8 @@
                     const $container = $('#available-books-container');
                     $container.empty();
 
-                    if (!response || !response.original || !response.original.data || response.original.data.length === 0) {
+                    if (!response || !response.original || !response.original.data || response.original.data
+                        .length === 0) {
                         $container.append('<p class="text-center">No available books found.</p>');
                         return;
                     }
@@ -28,7 +28,7 @@
                             "img/book.png";
                         var publishedYear = new Date(book.published_date).getFullYear();
                         const bookCard = `
-                            <div class="col-lg-3 mb-4">
+                            <div class="col-lg-3 mb-4 col-12">
                                 <article class="card card--1" style="min-height: 530px; width: 100%;">
                                     <div class="card__info-hover"></div>
                                     <div class="card__img" style="background-image: url(${photo});"></div>
@@ -36,10 +36,11 @@
                                         <div class="card__img--hover" style="background-image: url(${photo});"></div>
                                     </a>
                                     <div class="card__info pb-2">
-                                        <span class="card__category">${publishedYear}</span>
+                                        
                                         <h6 class="card__title">${book.title}</h6>
-                                        <div class="card__by mt-3">by <a href="#" class="card__author" title="author">${book.author}</a></div>
-                                        <span class="card__category w-100" style="display: inline-block; font-size: 12px; margin-top: 15px;">
+                                        <div class="card__by">by <a href="#" class="card__author" title="author">${book.author}</a></div>
+                                        <span class="card__category mt-4" style="display: inline-block; font-size: 12px;">Copyright &copy; ${publishedYear}</span>
+                                        <span class="card__category w-100" style="display: inline-block; font-size: 12px; margin-top: 9px;">
                                             ${book.total_quantity} Available Copies
                                         </span>
                                     </div>

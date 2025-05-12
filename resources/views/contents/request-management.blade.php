@@ -82,6 +82,7 @@
                                 <th>Request Qty</th>
                                 <th>Released Qty</th>
                                 <th>Remarks</th>
+                                <th>Return Date</th>
                                 <th>Status</th>
                                 <th class="no-sort">Action</th>
                             </tr>
@@ -162,6 +163,7 @@
 
                             }
                         },
+                        
                         {
                             "data": null,
                             "render": function(data, type, row) {
@@ -246,6 +248,18 @@
                             }
                         },
                         {
+                            "data": "expected_return_date",
+                            "render": function(data, type, row) {
+                                if (data) {
+                                    const date = new Date(data);
+                                    const options = { year: 'numeric', month: 'long', day: 'numeric' };
+                                    return `<div class="text-center">${date.toLocaleDateString('en-US', options)}</div>`;
+                                } else {
+                                    return '<span class="text-muted">Not specified</span>';
+                                }
+                            }
+                        },
+                        {
                             "data": null,
                             "render": function(data, type, row) {
                                 return row.status === "approved" ?
@@ -272,7 +286,7 @@
                         }
                     ],
                     "createdRow": function(row, data, dataIndex) {
-                        $(row).find('td').eq(7).addClass('action-table-data');
+                        $(row).find('td').eq(8).addClass('action-table-data');
                     },
                     "initComplete": function(settings, json) {
                         $('.dataTables_filter').appendTo('#tableSearch');

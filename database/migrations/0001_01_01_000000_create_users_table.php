@@ -99,8 +99,9 @@ return new class extends Migration
             $table->unsignedBigInteger('transaction_id')->nullable(); 
             $table->timestamp('borrow_timestamp');
             $table->timestamp('return_date')->nullable();
+            $table->timestamp('expected_return_date')->nullable(); 
             $table->integer('quantity_lost')->default(0);
-            $table->enum('status', ['borrowed', 'partially_returned', 'returned'])->default('borrowed');
+            $table->enum('status', ['borrowed', 'partially_returned', 'returned', 'due'])->default('borrowed');
             $table->timestamps();
 
             $table->foreign('book_id')->references('book_id')->on('books')->onDelete('cascade');
