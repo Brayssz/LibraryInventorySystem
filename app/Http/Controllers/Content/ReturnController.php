@@ -23,7 +23,7 @@ class ReturnController extends Controller
                 $query->where('book_id', $request->book_id);
             }
             if ($request->filled('school_id')) {
-                $query->whereHas('transaction.referenceCode.bookRequests', function ($q) use ($request) {
+                $query->whereHas('transaction.referenceCode.bookRequest', function ($q) use ($request) {
                     $q->where('school_id', $request->school_id);
                 });
             }
