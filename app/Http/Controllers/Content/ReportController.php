@@ -291,7 +291,7 @@ class ReportController extends Controller
                 ->with([
                     'transaction.referenceCode',
                     'transaction.inventory.book',
-                    'transaction.referenceCode.bookRequests.school'
+                    'transaction.referenceCode.bookRequest.school'
                 ]);
 
             if ($request->filled('date_range')) {
@@ -307,8 +307,8 @@ class ReportController extends Controller
             foreach ($transactions as $borrow) {
                 $report->push([
                     'reference_code' => $borrow->transaction->referenceCode->reference_code ?? null,
-                    'school_name' => $borrow->transaction->referenceCode->bookRequests->first()->school->name ?? null,
-                    'book_name' => $borrow->transaction->referenceCode->bookRequests->first()->book->title ?? null,
+                    'school_name' => $borrow->transaction->referenceCode->bookRequest->school->name ?? null,
+                    'book_name' => $borrow->transaction->referenceCode->bookRequest->book->title ?? null,
                     'quantity_borrowed' => $borrow->transaction->quantity,
                     'quantity_returned' => $borrow->returnTransactions->sum('quantity'),
                     'quantity_lost' => $borrow->quantity_lost,
@@ -347,7 +347,7 @@ class ReportController extends Controller
                 ->with([
                     'borrowTransaction.transaction.referenceCode',
                     'borrowTransaction.transaction.inventory.book',
-                    'borrowTransaction.transaction.referenceCode.bookRequests.school',
+                    'borrowTransaction.transaction.referenceCode.bookRequest.school',
                     'recordedBy'
                 ]);
 
@@ -365,7 +365,7 @@ class ReportController extends Controller
                 $borrowTransaction = $returnTransaction->borrowTransaction;
                 $report->push([
                     'reference_code' => $borrowTransaction->transaction->referenceCode->reference_code ?? null,
-                    'school_name' => $borrowTransaction->transaction->referenceCode->bookRequests->first()->school->name ?? null,
+                    'school_name' => $borrowTransaction->transaction->referenceCode->bookRequest->school->name ?? null,
                     'book_name' => $borrowTransaction->transaction->inventory->book->title ?? null,
                     'quantity_returned' => $returnTransaction->quantity,
                     'recorded_by' => $returnTransaction->recordedBy->name ?? 'Unknown',
