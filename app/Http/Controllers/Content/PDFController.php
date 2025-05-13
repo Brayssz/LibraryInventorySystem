@@ -123,7 +123,7 @@ class PDFController extends Controller
             ->with([
                 'transaction.referenceCode',
                 'transaction.inventory.book',
-                'transaction.referenceCode.bookRequests.school'
+                'transaction.referenceCode.bookRequest.school'
             ]);
 
         $startDate = null;
@@ -142,8 +142,8 @@ class PDFController extends Controller
         foreach ($transactions as $borrow) {
             $report[] = [
                 'reference_code' => $borrow->transaction->referenceCode->reference_code ?? null,
-                'school_name' => $borrow->transaction->referenceCode->bookRequests->first()->school->name ?? null,
-                'book_name' => $borrow->transaction->referenceCode->bookRequests->first()->book->title ?? null,
+                'school_name' => $borrow->transaction->referenceCode->bookRequest->school->name ?? null,
+                'book_name' => $borrow->transaction->referenceCode->bookRequest->book->title ?? null,
                 'quantity_borrowed' => $borrow->transaction->quantity,
                 'quantity_returned' => $borrow->returnTransactions->sum('quantity'),
                 'quantity_lost' => $borrow->quantity_lost,
@@ -163,7 +163,7 @@ class PDFController extends Controller
             ->with([
                 'borrowTransaction.transaction.referenceCode',
                 'borrowTransaction.transaction.inventory.book',
-                'borrowTransaction.transaction.referenceCode.bookRequests.school',
+                'borrowTransaction.transaction.referenceCode.bookRequest.school',
                 'recordedBy'
             ]);
 
@@ -184,7 +184,7 @@ class PDFController extends Controller
             $borrowTransaction = $returnTransaction->borrowTransaction;
             $report[] = [
                 'reference_code' => $borrowTransaction->transaction->referenceCode->reference_code ?? null,
-                'school_name' => $borrowTransaction->transaction->referenceCode->bookRequests->first()->school->name ?? null,
+                'school_name' => $borrowTransaction->transaction->referenceCode->bookRequest->school->name ?? null,
                 'book_name' => $borrowTransaction->transaction->inventory->book->title ?? null,
                 'quantity_returned' => $returnTransaction->quantity,
                 'recorded_by' => $returnTransaction->recordedBy->name ?? 'Unknown',
@@ -202,15 +202,6 @@ class PDFController extends Controller
     {
         $query = Book::with('inventory');
 
-        $startDate = null;
-        $endDate = null;
-
-        if ($request->filled('date_range')) {
-            $dates = explode(' - ', $request->date_range);
-            $startDate = Carbon::createFromFormat('m/d/Y', trim($dates[0]))->startOfDay();
-            $endDate = Carbon::createFromFormat('m/d/Y', trim($dates[1]))->endOfDay();
-        }
-
         $books = $query->get();
         $report = [];
 
@@ -220,12 +211,6 @@ class PDFController extends Controller
 
             $quantityDelivered = $divisionInventory ? Transaction::where('inventory_id', $divisionInventory->inventory_id)
                 ->where('transaction_type', 'delivery')
-                ->when($startDate, function ($query) use ($startDate) {
-                    $query->where('transaction_timestamp', '>=', $startDate);
-                })
-                ->when($endDate, function ($query) use ($endDate) {
-                    $query->where('transaction_timestamp', '<=', $endDate);
-                })
                 ->sum('quantity') : 0;
 
             $schoolInventoryIds = $schoolInventories->pluck('inventory_id');
@@ -234,21 +219,13 @@ class PDFController extends Controller
                 ->with('borrowTransaction.returnTransactions')
                 ->get();
 
-            $quantityReceivedInSchools = $transactions->filter(function ($transaction) use ($startDate, $endDate) {
-                return (!$startDate || Carbon::parse($transaction->transaction_timestamp)->gte($startDate)) &&
-                       (!$endDate || Carbon::parse($transaction->transaction_timestamp)->lte($endDate));
-            })->sum('quantity');
+            $quantityReceivedInSchools = $transactions->sum('quantity');
 
             $quantityOnDivision = $quantityDelivered - $quantityReceivedInSchools;
 
             $quantityBorrowed = $quantityReceivedInSchools;
-            $quantityReturned = $transactions->sum(function ($transaction) use ($startDate, $endDate) {
-                return $transaction->borrowTransaction->returnTransactions
-                    ->filter(function ($returnTransaction) use ($startDate, $endDate) {
-                        return (!$startDate || Carbon::parse($returnTransaction->return_date)->gte($startDate)) &&
-                               (!$endDate || Carbon::parse($returnTransaction->return_date)->lte($endDate));
-                    })
-                    ->sum('quantity');
+            $quantityReturned = $transactions->sum(function ($transaction) {
+                return $transaction->borrowTransaction->returnTransactions->sum('quantity');
             });
 
             $quantityLost = $quantityBorrowed - $quantityReturned;
@@ -263,7 +240,7 @@ class PDFController extends Controller
             ];
         }
 
-        $pdf = Pdf::loadView('pdf.book-inventory-report-pdf', compact('report', 'startDate', 'endDate'));
+        $pdf = Pdf::loadView('pdf.book-inventory-report-pdf', compact('report'));
 
         return $pdf->stream('book_inventory_report.pdf');
     }

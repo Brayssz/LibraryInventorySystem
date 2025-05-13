@@ -6,23 +6,33 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Book Inventory Report</title>
     <style>
+       @font-face {
+            font-family: 'OldEnglishTextMT';
+            src: url('{{ asset('fonts/oldenglishtextmts.ttf') }}') format('truetype');
+            font-weight: bold;
+        }
+        
         body {
-            font-family: Arial, sans-serif;
-            font-size: 12px;
+            font-family: 'Bookman Old Style', serif;
+            font-size: 11px;
             margin: 0;
             padding: 0;
+        }
+
+        .old_english {
+            font-family: 'OldEnglishTextMT' !important;
         }
 
         table {
             width: 100%;
             border-collapse: collapse;
-            margin: 20px 0;
         }
 
-        th, td {
+        th,
+        td {
             border: 1px solid #000;
             padding: 8px;
-            font-size: 10px;
+            font-size: 9px;
             text-align: left;
         }
 
@@ -30,40 +40,99 @@
             background-color: #f0f0f0;
         }
 
-        td:first-child {
-            text-align: left;
-        }
-
         .logo {
             text-align: center;
-            margin-bottom: 20px;
-            position: absolute;
-            top: 0px;
-            left: 50px;
+            margin-bottom: 7px;
+            margin-top: -2px;
         }
 
         .logo img {
             width: 90px;
         }
+
+        .currency-sign {
+            font-family: DejaVu Sans !important;
+        }
+
+        header {
+            position: fixed;
+            top: -270px;
+            left: 0px;
+            right: 0px;
+            height: 100px;
+            text-align: center;
+        }
+
+        footer {
+            position: fixed;
+            bottom: -85px;
+            left: 0px;
+            right: 0px;
+            height: 50px;
+            text-align: center;
+            font-size: 10px;
+            border-top: 2px solid #000;
+        }
+
+        @page {
+            margin-top: 300px;
+            margin-bottom: 140px;
+        }
+
+        .page-number:after {
+            content: "Page " counter(page);
+        }
+       
     </style>
 </head>
 
 <body>
-    <div class="logo">
-        <img src="{{ public_path('img/logo.jpg') }}" alt="Logo">
-    </div>
+    <header>
+        <div class="header">
+            <div class="logo">
+                <img src="{{ public_path('img/deped_logo.png') }}" alt="Logo">
+            </div>
 
-    <h4 style="text-align: center; margin-bottom: 10px;">Koronadal City Division - LRMDS</h4>
-    <p style="text-align: center; margin-bottom: 5px;">Koronadal City, South Cotabato</p>
-    <p style="text-align: center; margin-bottom: 20px;">Region XII</p>
+            <p style="text-align: center; margin-bottom: -17px; font-size: 13px;" class="old_english">Republic of the
+                Philippines</p>
+            <p style="text-align: center; margin-bottom: -8px; font-size: 17px;" class="old_english">Department of
+                Education</p>
+            <p style="text-align: center; margin-bottom: -10px; letter-spacing: 4px;">SOCCSKSARGEN REGION</p>
+            <p style="text-align: center; margin-bottom: 20px; letter-spacing: 4px;">SCHOOLS DIVISION OF KORONADAL CITY
+            </p>
 
-    <div style="border-top: 1px solid #000; margin: 20px 0;"></div>
+            <div style="border-top: 2px solid #000; margin: 20px 0;"></div>
 
-    <h3 style="text-align: center; margin-top: 20px;">Book Inventory Report</h3>
-    <p style="text-align: center; margin-top: 0;">
-        {{ \Carbon\Carbon::parse($startDate)->format('F j, Y') }} - 
-        {{ \Carbon\Carbon::parse($endDate)->format('F j, Y') }}
-    </p>
+            <h3 style="text-align: center; margin-top: 0px;">Book Inventory Report</h3>
+        </div>
+    </header>
+
+    <footer>
+        <table style="width: 100%; margin-top: 10px; border-collapse: collapse; border: none;">
+            <tr>
+                <!-- Logo Section (left side) -->
+                <td style="width: 33%; text-align: left; vertical-align: top; border: none;">
+                    <img src="{{ public_path('img/deped-matatag-logos.png') }}" alt="Logo"
+                        style="width: 140px; margin-right: 5px;">
+                    <img src="{{ public_path('img/logo.jpg') }}" alt="Logo" style="width: 65px;">
+                </td>
+
+                <!-- Address Info (right side) -->
+                <td
+                    style="width: 57%; text-align: left; vertical-align: top; border: none; font-size: 11px; padding: 0px !important; font-family: Arial, sans-serif;">
+                    <p style="margin: 1px 0;"><strong>Address:</strong> Jaycee Avenue, Corner Rizal St., Brgy. Zone IV,
+                        City of Koronadal</p>
+                    <p style="margin: 1px 0;"><strong>Telephone Nos:</strong> (083) 228-1209 / (083) 228-9706</p>
+                    <p style="margin: 1px 0;"><strong>Email Address:</strong> Koronadal.city@deped.gov.ph</p>
+                    <p style="margin: 1px 0;"><strong>Date Generated:</strong>
+                        {{ \Carbon\Carbon::now()->format('F d, Y h:i A') }}</p>
+                </td>
+                <td style="width: 10%; text-align: right; vertical-align: top; border: none; font-family: Arial, sans-serif;">
+                    <div class="page-number"></div>
+                </td>
+            </tr>
+        </table>
+    </footer>
 
     <table>
         <thead>
@@ -78,32 +147,32 @@
             </tr>
         </thead>
         <tbody>
-            @forelse ($report as $record)
-                <tr>
-                    <th scope="row">{{ $loop->iteration }}</th>
-                    <td>{{ $record['book_title'] }}</td>
-                    <td>{{ $record['quantity_delivered'] }}</td>
-                    <td>{{ $record['quantity_on_division'] }}</td>
-                    <td>{{ $record['quantity_borrowed'] }}</td>
-                    <td>{{ $record['quantity_returned'] }}</td>
-                    <td>{{ $record['quantity_lost'] }}</td>
-                </tr>
+            @forelse (collect($report)->sortBy('book_title') as $record)
+            <tr>
+                <th scope="row">{{ $loop->iteration }}</th>
+                <td>{{ $record['book_title'] }}</td>
+                <td>{{ $record['quantity_delivered'] }}</td>
+                <td>{{ $record['quantity_on_division'] }}</td>
+                <td>{{ $record['quantity_borrowed'] }}</td>
+                <td>{{ $record['quantity_returned'] }}</td>
+                <td>{{ $record['quantity_lost'] }}</td>
+            </tr>
             @empty
-                <tr>
-                    <td colspan="7" class="text-center">No record found</td>
-                </tr>
+            <tr>
+                <td colspan="7" class="text-center">No record found</td>
+            </tr>
             @endforelse
         </tbody>
     </table>
 
-    <div>
+    {{-- <div>
         <h4 style="margin-bottom: 10px;">Prepared by:</h4>
         <h3 style="margin-bottom: 1px;">
             {{ Auth::user()->name }}
         </h3>
         <p style="font-size: 14px">Administrator</p>
         <p style="font-size: 14px">Generated on: {{ \Carbon\Carbon::now()->format('F j, Y') }}</p>
-    </div>
+    </div> --}}
 </body>
 
 </html>

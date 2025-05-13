@@ -480,7 +480,6 @@ class ReportController extends Controller
                 "data" => $report
             ]);
         }
-
         return view('reports.book-inventory-report');
     }
 }

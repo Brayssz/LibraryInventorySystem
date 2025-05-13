@@ -47,6 +47,7 @@
                                         <option value="borrowed">Borrowed</option>
                                         <option value="partially_returned">Partially Returned</option>
                                         <option value="returned">Returned</option>
+                                        <option value="due">Due</option>
                                     </select>
                                 </div>
                             </div>

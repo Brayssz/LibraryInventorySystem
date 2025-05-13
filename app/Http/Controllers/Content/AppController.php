@@ -11,6 +11,7 @@ use App\Models\Inventory;
 use App\Models\School;
 use App\Models\BorrowTransaction;
 use Illuminate\Support\Facades\DB;
+use Carbon\Carbon;
 use App\Models\Transaction;
 use App\Models\ReferenceCode;
 
@@ -39,6 +40,34 @@ class AppController extends Controller
 
         $pending_requests = BookRequest::where('status', 'pending')->with(['school', 'book'])->get();
 
+        $overdueTransactions = BorrowTransaction::where('status', 'due')
+            ->whereHas('transaction.referenceCode.bookRequest', function ($query) {
+            $query->whereNotNull('expected_return_date')
+                ->where('expected_return_date', '<', Carbon::today());
+            })
+            ->with(['transaction.referenceCode.bookRequest.school', 'transaction.referenceCode.bookRequest.book'])
+            ->get();
+
+        $overdueDetails = $overdueTransactions->map(function ($transaction) {
+            $bookRequest = $transaction->transaction->referenceCode->bookRequest;
+            $dueDate = Carbon::parse($bookRequest->expected_return_date);
+            $now = Carbon::today();
+
+            $diffInHours = $dueDate->diffInHours($now);
+            $diffInDays = $dueDate->diffInDays($now);
+
+            $timeDue = $diffInHours < 24 
+            ? "{$diffInHours} hours" 
+            : "{$diffInDays} days and " . ($diffInHours % 24) . " hours";
+
+            return [
+            'school' => $bookRequest->school->name,
+            'book' => $bookRequest->book->title,
+            'time_due' => $timeDue,
+            'requested_qty' => $bookRequest->quantity,
+            ];
+        });
+
         $top_borrowed_books = BorrowTransaction::join('books', 'borrow_transactions.book_id', '=', 'books.book_id')
             ->join('transactions', 'borrow_transactions.transaction_id', '=', 'transactions.transaction_id')
             ->select('books.title', 'books.published_date', 'books.book_photo_path', DB::raw('SUM(transactions.quantity) as total_borrowed'))
@@ -47,7 +76,11 @@ class AppController extends Controller
             ->limit(10)
             ->get();
 
-        return view('contents.dashboard', compact('total_users', 'total_books', 'total_requests', 'total_schools', 'pending_requests', 'top_borrowed_books'));
+        $total_pending_return = BorrowTransaction::where('status', 'borrowed')->count();
+        $total_partially_returned = BorrowTransaction::where('status', 'partially_returned')->count();
+        $total_due = BorrowTransaction::where('status', 'due')->count();
+
+        return view('contents.dashboard', compact('total_pending_return', 'total_partially_returned', 'total_due','total_users', 'total_books', 'total_requests', 'total_schools', 'pending_requests', 'top_borrowed_books', 'overdueDetails'));
     }
 
     public function getMonthlyTransactionData()
