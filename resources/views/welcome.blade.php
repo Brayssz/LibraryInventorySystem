@@ -9,8 +9,7 @@
     <meta name="keywords" content="">
 
     <!-- Favicons -->
-    <link href="assets/img/favicon.png" rel="icon">
-    <link href="assets/img/apple-touch-icon.png" rel="apple-touch-icon">
+    <link rel="icon" href="{{ asset('img/logo.jpg') }}" type="image/x-icon" />
 
     <!-- Fonts -->
     <link href="https://fonts.googleapis.com" rel="preconnect">

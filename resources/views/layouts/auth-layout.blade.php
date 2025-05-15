@@ -9,8 +9,9 @@
         content="admin, estimates, bootstrap, business, corporate, creative, invoice, html5, responsive, Projects">
     <meta name="author" content="Dreamguys - Bootstrap Admin Template">
     <meta name="robots" content="noindex, nofollow">
-    <title>Koronadal - LRMDS</title>
+    <title>Koronadal - LRMDS - BITS</title>
 
+    <link rel="icon" href="{{ asset('img/logo.jpg') }}" type="image/x-icon" />
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
 

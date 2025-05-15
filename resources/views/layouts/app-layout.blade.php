@@ -10,7 +10,7 @@
     <title>@yield('title', 'LRMDS')</title>
 
     <!-- Favicon -->
-    <link rel="icon" href="{{ asset('assets/images/logo-small.jpg') }}" type="image/x-icon" />
+    <link rel="icon" href="{{ asset('img/logo.jpg') }}" type="image/x-icon" />
 
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">

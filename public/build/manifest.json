@@ -28,6 +28,11 @@
     "src": "resources/assets/css/style.css",
     "isEntry": true
   },
+  "resources/assets/css/table.css": {
+    "file": "assets/table-BnTMp9w2.css",
+    "src": "resources/assets/css/table.css",
+    "isEntry": true
+  },
   "resources/assets/img/authentication/email-verification-img.jpg": {
     "file": "assets/email-verification-img-DNV8R8Wd.jpg",
     "src": "resources/assets/img/authentication/email-verification-img.jpg"
@@ -216,6 +221,12 @@
     "file": "assets/swiper-DUb-fR0O.js",
     "name": "swiper",
     "src": "resources/assets/js/swiper.js",
+    "isEntry": true
+  },
+  "resources/assets/js/table.js": {
+    "file": "assets/table-6nl1Y_FL.js",
+    "name": "table",
+    "src": "resources/assets/js/table.js",
     "isEntry": true
   },
   "resources/assets/js/theme-script.js": {
