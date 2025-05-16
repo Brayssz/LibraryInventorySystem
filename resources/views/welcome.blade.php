@@ -388,7 +388,7 @@
 
                         @foreach ($top_books as $top_book)
                             <div class="w-25">
-                                <article class="card card--1" style="min-height: 475px; width: 100%;">
+                                <article class="card card--1" style="min-height: 425px; width: 100%;">
                                     <div class="card__info-hover">
                                         <div class="card__clock-info">
                                             <svg class="card__clock" viewBox="0 0 24 24">
