@@ -19,7 +19,8 @@ class AvailableBooks extends Component
             })
             ->where(function ($query) use ($search) {
                 $query->where('title', 'like', "%{$search}%")
-                    ->orWhere('author', 'like', "%{$search}%");
+                    ->orWhere('author', 'like', "%{$search}%")
+                    ->orWhere('published_date', 'like', "%{$search}%");
             })
             ->with(['inventory' => function ($query) {
                 $query->selectRaw('book_id, SUM(quantity) as total_quantity')
