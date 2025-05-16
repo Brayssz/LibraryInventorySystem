@@ -16,6 +16,8 @@ class BorrowBook extends Component
     public $quantity = 0;
     public $remarks;
 
+    public $orderFilter;
+
     protected $rules = [
         'quantity' => 'required|integer|min:1',
     ];

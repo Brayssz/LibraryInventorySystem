@@ -146,8 +146,15 @@ class AppController extends Controller
     {
         $top_books =  BorrowTransaction::join('books', 'borrow_transactions.book_id', '=', 'books.book_id')
             ->join('transactions', 'borrow_transactions.transaction_id', '=', 'transactions.transaction_id')
-            ->select('books.title', 'books.published_date', 'books.book_photo_path', 'books.author', DB::raw('SUM(transactions.quantity) as total_borrowed'))
-            ->groupBy('books.title', 'books.published_date', 'books.book_photo_path', 'books.author')
+            ->select(
+                'books.title',
+                'books.published_date',
+                'books.book_photo_path',
+                'books.author',
+                'books.created_at',
+                DB::raw('SUM(transactions.quantity) as total_borrowed')
+            )
+            ->groupBy('books.title', 'books.published_date', 'books.book_photo_path', 'books.author', 'books.created_at')
             ->orderBy('total_borrowed', 'desc')
             ->limit(5)
             ->get();

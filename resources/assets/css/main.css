@@ -99,7 +99,7 @@ height: 100%;
     background-position: center;
     background-repeat: no-repeat;
     width: 100%;
-    height: 285px;
+    height: 265px;
   border-top-left-radius: 12px;
 border-top-right-radius: 12px;
   
@@ -189,6 +189,11 @@ border-bottom-right-radius: 12px;
 .card:hover .card__info-hover {
     opacity: 1;
 }
+.form-select:focus {
+    box-shadow: none;
+    border-color: #ced4da;
+    outline: none;
+  }
 
 .input {
   width: 100%;
@@ -223,6 +228,7 @@ border-bottom-right-radius: 12px;
   font-size: 16px;
   pointer-events: none; /* allow clicks to pass through */
 }
+  
 
 .pagination {
   padding: 30px 0;
@@ -469,7 +475,7 @@ h6 {
   --heading-color: #ffffff;
   color: var(--default-color);
   background-color: var(--background-color);
-  padding: 20px 0;
+  padding: 12px 0;
   transition: all 0.5s;
   z-index: 997;
 }
@@ -483,7 +489,7 @@ h6 {
 }
 
 .header .logo h1 {
-  font-size: 30px;
+  font-size: 22px;
   margin: 0;
   font-weight: 700;
   color: var(--heading-color);
