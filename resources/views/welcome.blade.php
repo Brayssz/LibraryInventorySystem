@@ -205,7 +205,7 @@
             </div><!-- End Section Title -->
 
             <div class="mb-1 ps-3 container-lg d-flex justify-content-start">
-                <input type="text" class="input w-100 me-2 ps-3" placeholder="Search by school / dts / fund source..."
+                <input type="text" class="input w-100 me-2 ps-3" placeholder="Search by book title..."
                     id="searchInput" style="max-width: 420px; font-size: 12px;">
 
                 <select class="form-select w-100 me-1 ps-3 input" id="orderFilter" style="max-width: 180px; font-size: 12px;">
