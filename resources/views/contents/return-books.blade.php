@@ -78,7 +78,7 @@
                                 <th>Remaining Qty</th>
                                 <th>Returned Qty</th>
                                 <th>Lost Qty</th>
-                                <th>Expected Return Date</th>
+                                <th>Due Date</th>
                                 <th>Status</th>
                                 <th class="no-sort">Action</th>
                             </tr>
