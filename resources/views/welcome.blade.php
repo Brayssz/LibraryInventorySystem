@@ -31,9 +31,12 @@
 
     <!-- GLightbox -->
     <link href="https://cdn.jsdelivr.net/npm/glightbox@3.3.0/dist/css/glightbox.min.css" rel="stylesheet">
+    
 
     <!-- Swiper -->
     <link href="https://cdn.jsdelivr.net/npm/swiper@11.0.5/swiper-bundle.min.css" rel="stylesheet">
+    
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11.17/dist/sweetalert2.min.css">
 
     <!-- Main CSS File -->
     {{-- <link href="assets/css/main.css" rel="stylesheet"> --}}
@@ -551,6 +554,8 @@
 
     <script src="https://unpkg.com/micromodal/dist/micromodal.min.js"></script>
 
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.17/dist/sweetalert2.all.min.js"></script>
+
     @livewireScripts
 
 
@@ -559,6 +564,23 @@
 
     @vite(['resources/assets/js/main.js'])
     @stack('scripts')
+
+    <script>
+        $(document).ready(function () {
+            $('#borrow-book-modal').modal('hide');
+            @if (session('success'))
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Success',
+                    text: '{{ session('success') }}',
+                    timer: 3000,
+                    showConfirmButton: false
+                });
+
+                
+            @endif
+        });
+    </script>
 
 </body>
 

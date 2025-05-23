@@ -1,6 +1,5 @@
+<div>
 
-<div >
-    
     <div class="modal fade" id="borrow-book-modal" wire:ignore.self>
         <div class="modal-dialog">
             <div class="modal-content">
@@ -14,76 +13,100 @@
                         <input type="hidden" wire:model="book_id">
                         <div class="mb-3">
                             <label for="quantity" class="form-label">Quantity</label>
-                            <input type="number" class=" input w-100" id="quantity" wire:model.lazy="quantity" style="max-width: 100%;">
+                            <input type="number" class=" input w-100" id="quantity" wire:model.lazy="quantity"
+                                style="max-width: 100%;">
                             @error('quantity')
                                 <span class="text-danger">{{ $message }}</span>
                             @enderror
                         </div>
                         <div class="mb-3">
                             <label for="remarks" class="form-label">Remarks</label>
-                            <textarea class="form-control" id="remarks" rows="4" wire:model.lazy="remarks" placeholder="Enter request remarks"></textarea>
+                            <textarea class="form-control" id="remarks" rows="4" wire:model.lazy="remarks"
+                                placeholder="Enter request remarks"></textarea>
                             @error('remarks')
                                 <span class="text-danger">{{ $message }}</span>
                             @enderror
                         </div>
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                            <button type="submit" class="btn" wire:loading.attr="disabled">Submit</button>
+                        <div class="mb-3">
+                            <label for="expected_return_date" class="form-label">Expected Return Date</label>
+                            <input type="date" class="form-control" id="expected_return_date"
+                                wire:model.lazy="expected_return_date">
+                            @error('expected_return_date')
+                                <span class="text-danger">{{ $message }}</span>
+                            @enderror
                         </div>
-                    </form>
                 </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn" wire:loading.attr="disabled">Submit</button>
+                </div>
+                </form>
             </div>
         </div>
-        
     </div>
 
-    
+</div>
 
-    @push('scripts')
-            <script>
-                document.addEventListener('DOMContentLoaded', () => {
-                    handleBorrowBookActions();
+
+
+@push('scripts')
+    <script>
+        $(document).ready(function() {
+            console.log('Document is ready');
+            $('#borrow-book-modal').modal('hide');
+            @if (session('success'))
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Success',
+                    text: '{{ session('success') }}',
+                    timer: 3000,
+                    showConfirmButton: false
                 });
-    
-                function handleBorrowBookActions() {
-                    $(document).on('change', '[id]:not([type="date"]):not([type="time"])', handleInputChange);
-                    $(document).on('click', '.borrow-book', openBorrowBookModal);
-                }
-    
-                function handleInputChange(e) {
-                    if ($(e.target).is('select') || $(e.target).is('.not_pass')) {
-                        const property = e.target.id;
-                        const value = e.target.value;
-                        @this.set(property, value);
-    
-                        console.log(`${property}: ${value}`);
-                    }
-                }
-    
-                function openBorrowBookModal() {
-                    const bookId = $(this).data('bookid');
-    
-                    if(bookId === null) {
-                        messageAlert('Invalid Action', 'No Available Copies.');
-                        return;
-                    }
-    
-                    @this.call('checkLogin').then(response => {
-                        if (response) {
-                            @this.call('resetFields').then(() => {
-                                @this.set('book_id', bookId);
-                                @this.set('quantity', 0);
-                                $('#borrow-book-modal').modal('show');
-                            });
-                        } 
+            @endif
+        });
+        document.addEventListener('DOMContentLoaded', () => {
+            handleBorrowBookActions();
+        });
+
+        function handleBorrowBookActions() {
+            $(document).on('change', '[id]:not([type="date"]):not([type="time"])', handleInputChange);
+            $(document).on('click', '.borrow-book', openBorrowBookModal);
+        }
+
+        function handleInputChange(e) {
+            if ($(e.target).is('select') || $(e.target).is('.not_pass')) {
+                const property = e.target.id;
+                const value = e.target.value;
+                @this.set(property, value);
+
+                console.log(`${property}: ${value}`);
+            }
+        }
+
+        function openBorrowBookModal() {
+            const bookId = $(this).data('bookid');
+
+            if (bookId === null) {
+                messageAlert('Invalid Action', 'No Available Copies.');
+                return;
+            }
+
+            @this.call('checkLogin').then(response => {
+                if (response) {
+                    @this.call('resetFields').then(() => {
+                        @this.set('book_id', bookId);
+                        @this.set('quantity', 0);
+                        $('#borrow-book-modal').modal('show');
                     });
-    
-                    // @this.call('resetFields').then(() => {
-                    //     @this.set('book_id', bookId);
-                    //     @this.set('quantity', 0);
-                    //     $('#borrow-book-modal').modal('show');
-                    // });
                 }
-            </script>
-        @endpush
+            });
+
+            // @this.call('resetFields').then(() => {
+            //     @this.set('book_id', bookId);
+            //     @this.set('quantity', 0);
+            //     $('#borrow-book-modal').modal('show');
+            // });
+        }
+    </script>
+@endpush
 </div>

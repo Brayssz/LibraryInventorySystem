@@ -15,13 +15,14 @@ class BorrowBook extends Component
     public $book_id;
     public $quantity = 0;
     public $remarks;
+    public $expected_return_date; // Added attribute
 
     public $orderFilter;
 
     protected $rules = [
         'quantity' => 'required|integer|min:1',
+        'expected_return_date' => 'required|date|after:today', // Validation rule for expected_return_date
     ];
-
 
     public function generateReferenceCode()
     {
@@ -33,7 +34,6 @@ class BorrowBook extends Component
         if (session()->has('school_id_expires_at') && now()->lessThan(session('school_id_expires_at'))) {
 
             $school_id = session('school_id');
-
 
             return true;
         } else {
@@ -49,7 +49,6 @@ class BorrowBook extends Component
         $this->validate();
 
         $school_id = session('school_id');
-
 
         $inventory = Inventory::where('book_id', $this->book_id)
             ->where('location_type', 'division')
@@ -69,6 +68,7 @@ class BorrowBook extends Component
             'book_id' => $this->book_id,
             'remarks' => $this->remarks,
             'quantity' => $this->quantity,
+            'expected_return_date' => $this->expected_return_date,
             'reference_id' => $reference->reference_id,
             'status' => 'pending',
         ]);
@@ -77,7 +77,7 @@ class BorrowBook extends Component
 
         $this->resetFields();
 
-        return redirect()->route('request-form');
+        return redirect()->to('/')->with('success', 'Book request created successfully.');
     }
 
     public function resetFields()
@@ -85,6 +85,7 @@ class BorrowBook extends Component
         $this->book_id = null;
         $this->quantity = null;
         $this->remarks = null;
+        $this->expected_return_date = null; // Reset expected_return_date
     }
 
     public function render()
